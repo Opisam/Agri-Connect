@@ -64,6 +64,7 @@ jobs:
       DEBUG: 'False'
       SECRET_KEY: ci-secret-key-not-for-production
       DJANGO_SETTINGS_MODULE: config.settings
+      DISABLE_THROTTLING: 'True'
     steps:
       - uses: actions/checkout@v4
 

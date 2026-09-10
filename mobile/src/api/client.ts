@@ -4,6 +4,26 @@ import axios from 'axios';
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8000/api/v1';
 
+export interface ApiEnvelope<T> {
+  status: 'success' | 'error';
+  data: T;
+}
+
+export const unwrap = <T>(envelope: ApiEnvelope<T>): T => envelope.data;
+
+export function getApiErrorMessage(error: unknown): string {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'response' in error &&
+    typeof (error as { response: { data?: { message?: string } } }).response.data?.message === 'string'
+  ) {
+    return (error as { response: { data: { message: string } } }).response.data
+      .message;
+  }
+  return 'Something went wrong. Please try again.';
+}
+
 export const TOKEN_KEYS = {
   access: 'agri_access_token',
   refresh: 'agri_refresh_token',
@@ -47,11 +67,12 @@ api.interceptors.response.use(
       const refresh = await tokenStorage.get(TOKEN_KEYS.refresh);
       if (refresh) {
         try {
-          const { data } = await axios.post(`${API_BASE_URL}/auth/token/refresh/`, {
-            refresh,
-          });
-          await tokenStorage.set(TOKEN_KEYS.access, data.access);
-          original.headers.Authorization = `Bearer ${data.access}`;
+          const { data } = await axios.post<ApiEnvelope<{ access: string }>>(
+            `${API_BASE_URL}/auth/token/refresh/`,
+            { refresh },
+          );
+          await tokenStorage.set(TOKEN_KEYS.access, data.data.access);
+          original.headers.Authorization = `Bearer ${data.data.access}`;
           return api(original);
         } catch {
           await tokenStorage.clear();

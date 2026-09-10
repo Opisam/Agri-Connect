@@ -16,6 +16,7 @@ env = environ.Env(
     CORS_ALLOWED_ORIGINS=(list, ["http://localhost:5173", "http://127.0.0.1:5173"]),
     CORS_ALLOW_ALL_ORIGINS=(bool, False),
     DATABASE_URL=(str, "sqlite:///db.sqlite3"),
+    DISABLE_THROTTLING=(bool, False),
 )
 
 if sys.platform == "win32":
@@ -24,6 +25,14 @@ if sys.platform == "win32":
 DEBUG = env("DEBUG")
 SECRET_KEY = env("SECRET_KEY")
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+
+# Disable DRF throttling in automated tests / CI for deterministic behavior.
+DISABLE_THROTTLING = env("DISABLE_THROTTLING")
+_run_throttle_classes = (
+    "rest_framework.throttling.AnonRateThrottle",
+    "rest_framework.throttling.UserRateThrottle",
+    "config.throttling.ScopedRateThrottle",
+)
 
 # Application definition
 DJANGO_APPS = [
@@ -38,6 +47,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "django_filters",
 ]
@@ -138,6 +148,9 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
+    "DEFAULT_RENDERER_CLASSES": (
+        "config.renderers.ApiRenderer",
+    ),
     "DEFAULT_FILTER_BACKENDS": (
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
@@ -145,14 +158,15 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
-    "DEFAULT_THROTTLE_CLASSES": (
-        "rest_framework.throttling.AnonRateThrottle",
-        "rest_framework.throttling.UserRateThrottle",
-    ),
+    "DEFAULT_THROTTLE_CLASSES": () if DISABLE_THROTTLING else _run_throttle_classes,
     "DEFAULT_THROTTLE_RATES": {
         "anon": "100/hour",
         "user": "1000/hour",
+        "login": "10/minute",
+        "register": "5/minute",
+        "token_refresh": "20/minute",
     },
+    "EXCEPTION_HANDLER": "config.exceptions.api_exception_handler",
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.openapi.AutoSchema",
 }

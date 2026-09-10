@@ -7,6 +7,20 @@ export const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
+export interface ApiEnvelope<T> {
+  status: 'success' | 'error'
+  data: T
+}
+
+export const unwrap = <T>(envelope: ApiEnvelope<T>): T => envelope.data
+
+export function getApiErrorMessage(error: unknown): string {
+  if (axios.isAxiosError<{ message?: string }>(error)) {
+    return error.response?.data?.message ?? 'Something went wrong. Please try again.'
+  }
+  return 'Something went wrong. Please try again.'
+}
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access')
   if (token) {
@@ -24,11 +38,12 @@ api.interceptors.response.use(
       const refresh = localStorage.getItem('refresh')
       if (refresh) {
         try {
-          const { data } = await axios.post(`${API_BASE_URL}/auth/token/refresh/`, {
-            refresh,
-          })
-          localStorage.setItem('access', data.access)
-          original.headers.Authorization = `Bearer ${data.access}`
+          const { data } = await axios.post<ApiEnvelope<{ access: string }>>(
+            `${API_BASE_URL}/auth/token/refresh/`,
+            { refresh },
+          )
+          localStorage.setItem('access', data.data.access)
+          original.headers.Authorization = `Bearer ${data.data.access}`
           return api(original)
         } catch {
           localStorage.removeItem('access')
