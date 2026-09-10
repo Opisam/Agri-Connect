@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+
+# Python / Django
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Virtual environments
+backend/.venv/
+.venv/
+
+# Environment files (keep examples)
+.env
+*.env
+!.env.example
+backend/.env
+web/.env.local
+mobile/.env.local
+
+# Django
+*.sqlite3
+backend/staticfiles/
+backend/media/
+backend/logs/
+
+# Build outputs
+web/dist/
+web/build/
+mobile/dist/
+mobile/android/
+mobile/ios/
+
+# Expo
+.expo/
+mobile/.expo/
+
+# Test coverage output
+coverage/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# npm
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*

@@ -1,0 +1,16 @@
+# Production
+Django>=6.0,<7.0
+djangorestframework>=3.18
+djangorestframework-simplejwt>=5.5
+psycopg[binary]>=3.2,<4.0
+django-cors-headers>=4.6
+django-filter>=25.1
+django-environ>=0.12
+Pillow>=11.0
+
+# Development
+ruff>=0.12
+pytest>=9.0
+pytest-django>=4.10
+coverage>=7.8
+model-bakery>=1.24
