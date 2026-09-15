@@ -246,6 +246,14 @@ export function FarmsScreen() {
                     <Text style={s.buttonGhostText}>Fields</Text>
                   </Pressable>
                   <Pressable
+                    style={[s.buttonGhost, s.actionFlex]}
+                    onPress={() =>
+                      navigation.navigate('Expenses', { farmId: farm.id })
+                    }
+                  >
+                    <Text style={s.buttonGhostText}>Finances</Text>
+                  </Pressable>
+                  <Pressable
                     style={[s.buttonDanger, s.actionFlex]}
                     onPress={() => onDelete(farm)}
                   >

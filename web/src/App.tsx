@@ -5,10 +5,14 @@ import { useAuth } from './auth/useAuth'
 import { FarmLayout } from './layouts/FarmLayout'
 import { ActivitiesPage } from './pages/ActivitiesPage'
 import { CropsPage } from './pages/CropsPage'
+import { ExpensesPage } from './pages/ExpensesPage'
 import { FarmsPage } from './pages/FarmsPage'
 import { FieldsPage } from './pages/FieldsPage'
+import { HarvestsPage } from './pages/HarvestsPage'
 import { LoginPage } from './pages/LoginPage'
+import { ProfitLossPage } from './pages/ProfitLossPage'
 import { RegisterPage } from './pages/RegisterPage'
+import { SalesPage } from './pages/SalesPage'
 
 function Home() {
   return (
@@ -84,6 +88,12 @@ function App() {
           <Route path="/crops" element={<FarmLayout />}>
             <Route index element={<CropsPage />} />
             <Route path=":cropId/activities" element={<ActivitiesPage />} />
+          </Route>
+          <Route path="/finance" element={<FarmLayout />}>
+            <Route index element={<ProfitLossPage />} />
+            <Route path="expenses" element={<ExpensesPage />} />
+            <Route path="harvests" element={<HarvestsPage />} />
+            <Route path="sales" element={<SalesPage />} />
           </Route>
         </Routes>
       </AuthProvider>

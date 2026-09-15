@@ -10,6 +10,9 @@ import { FarmsScreen } from './src/screens/FarmsScreen';
 import { FieldsScreen } from './src/screens/FieldsScreen';
 import { CropsScreen } from './src/screens/CropsScreen';
 import { ActivitiesScreen } from './src/screens/ActivitiesScreen';
+import { ExpensesScreen } from './src/screens/ExpensesScreen';
+import { HarvestsScreen } from './src/screens/HarvestsScreen';
+import { SalesScreen } from './src/screens/SalesScreen';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -19,6 +22,9 @@ export type RootStackParamList = {
   Fields: { farmId: number; farmName: string };
   Crops: { fieldId?: number; fieldName?: string };
   Activities: { cropId: number; cropLabel: string };
+  Expenses: { farmId: number };
+  Harvests: { farmId: number };
+  Sales: { farmId: number };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -58,6 +64,21 @@ export default function App() {
             name="Activities"
             component={ActivitiesScreen}
             options={{ title: 'Activities' }}
+          />
+          <Stack.Screen
+            name="Expenses"
+            component={ExpensesScreen}
+            options={{ title: 'Expenses' }}
+          />
+          <Stack.Screen
+            name="Harvests"
+            component={HarvestsScreen}
+            options={{ title: 'Harvests' }}
+          />
+          <Stack.Screen
+            name="Sales"
+            component={SalesScreen}
+            options={{ title: 'Sales' }}
           />
         </Stack.Navigator>
       </NavigationContainer>
