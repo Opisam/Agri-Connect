@@ -64,3 +64,6 @@ pnpm-debug.log*
 # Project planning docs (kept local, not tracked in repo)
 prd.md
 implementation.md
+workflow issues.md
+backend/db.sqlite3.bak
+*.sqlite3.bak

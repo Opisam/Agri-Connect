@@ -47,7 +47,7 @@ jobs:
         working-directory: backend
     services:
       postgres:
-        image: postgres:16
+        image: postgres:18
         env:
           POSTGRES_USER: agri
           POSTGRES_PASSWORD: agri
@@ -65,6 +65,9 @@ jobs:
       SECRET_KEY: ci-secret-key-not-for-production
       DJANGO_SETTINGS_MODULE: config.settings
       DISABLE_THROTTLING: 'True'
+      SECURE_SSL_REDIRECT: 'False'
+      SESSION_COOKIE_SECURE: 'False'
+      CSRF_COOKIE_SECURE: 'False'
     steps:
       - uses: actions/checkout@v4
 
