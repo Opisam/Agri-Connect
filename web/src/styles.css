@@ -386,6 +386,39 @@ button {
   color: var(--muted);
 }
 
+.badge-draft {
+  background: rgba(117, 117, 117, 0.12);
+  color: #555;
+}
+
+.badge-active,
+.badge-accepted {
+  background: rgba(46, 125, 50, 0.12);
+  color: var(--brand-dark);
+}
+
+.badge-sold,
+.badge-completed {
+  background: rgba(25, 118, 210, 0.12);
+  color: #1565c0;
+}
+
+.badge-expired,
+.badge-rejected {
+  background: rgba(117, 117, 117, 0.08);
+  color: #888;
+}
+
+.badge-cancelled {
+  background: rgba(198, 40, 40, 0.10);
+  color: var(--error);
+}
+
+.badge-pending {
+  background: rgba(245, 124, 0, 0.12);
+  color: #e65100;
+}
+
 @media (max-width: 640px) {
   .stat-grid {
     grid-template-columns: 1fr;

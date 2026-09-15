@@ -1,6 +1,16 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+import { useAuth } from '../auth/useAuth';
+import type { RootStackParamList } from '../../App';
+
+type HomeNavigation = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 export function HomeScreen() {
+  const navigation = useNavigation<HomeNavigation>();
+  const { user } = useAuth();
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>AgriConnect Uganda</Text>
@@ -8,6 +18,33 @@ export function HomeScreen() {
         Manage your farm. Understand your finances. Find better market
         opportunities.
       </Text>
+
+      <View style={styles.menu}>
+        <Pressable
+          style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+          onPress={() => navigation.navigate('Marketplace')}
+        >
+          <Text style={styles.buttonText}>Browse Marketplace</Text>
+        </Pressable>
+        {user && (
+          <>
+            <Pressable
+              style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+              onPress={() => navigation.navigate('Orders')}
+            >
+              <Text style={styles.buttonText}>My Orders</Text>
+            </Pressable>
+            {user.role === 'FARMER' && (
+              <Pressable
+                style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+                onPress={() => navigation.navigate('Farms')}
+              >
+                <Text style={styles.buttonText}>My Farms</Text>
+              </Pressable>
+            )}
+          </>
+        )}
+      </View>
     </View>
   );
 }
@@ -30,5 +67,24 @@ const styles = StyleSheet.create({
     color: '#4a6b4a',
     textAlign: 'center',
     marginTop: 8,
+  },
+  menu: {
+    width: '100%',
+    marginTop: 24,
+    gap: 12,
+  },
+  button: {
+    backgroundColor: '#2e7d32',
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  buttonPressed: {
+    opacity: 0.85,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
