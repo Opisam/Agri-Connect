@@ -2,12 +2,14 @@ import { render, fireEvent } from '@testing-library/react-native';
 
 import { HomeScreen } from '../src/screens/HomeScreen';
 
+const mockNavigate = jest.fn();
+
 jest.mock('@react-navigation/native', () => {
   const actual = jest.requireActual('@react-navigation/native');
   return {
     ...actual,
     useNavigation: () => ({
-      navigate: jest.fn(),
+      navigate: mockNavigate,
     }),
   };
 });
@@ -30,4 +32,9 @@ test('renders the AgriConnect heading', async () => {
 test('shows the marketplace link to logged-out users', async () => {
   const { getByText } = await render(<HomeScreen />);
   expect(getByText('Browse Marketplace')).toBeOnTheScreen();
+});
+
+test('shows the market prices link to logged-out users', async () => {
+  const { getByText } = await render(<HomeScreen />);
+  expect(getByText('Market Prices')).toBeOnTheScreen();
 });

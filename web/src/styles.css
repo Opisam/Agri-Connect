@@ -419,6 +419,26 @@ button {
   color: #e65100;
 }
 
+/* Market price history table */
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.history-table th,
+.history-table td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.history-table th {
+  background: var(--surface);
+  font-weight: 600;
+}
+
 @media (max-width: 640px) {
   .stat-grid {
     grid-template-columns: 1fr;

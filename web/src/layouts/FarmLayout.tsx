@@ -29,6 +29,7 @@ export function FarmLayout() {
         <Link to="/crops">Crops</Link>
         <Link to="/finance">Finances</Link>
         <Link to="/marketplace">Marketplace</Link>
+        <Link to="/markets/prices">Market Prices</Link>
         <button type="button" className="btn-ghost" onClick={() => void logout()}>
           Log out
         </button>

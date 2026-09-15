@@ -11,6 +11,7 @@ import { FieldsPage } from './pages/FieldsPage'
 import { HarvestsPage } from './pages/HarvestsPage'
 import { LoginPage } from './pages/LoginPage'
 import { MarketplacePage } from './pages/MarketplacePage'
+import { MarketPricesPage } from './pages/MarketPricesPage'
 import { MyListingsPage } from './pages/MyListingsPage'
 import { OrdersPage } from './pages/OrdersPage'
 import { ProfitLossPage } from './pages/ProfitLossPage'
@@ -27,6 +28,7 @@ function Home() {
       <nav>
         <Link to="/">Home</Link>
         <Link to="/marketplace">Marketplace</Link>
+        <Link to="/markets/prices">Market Prices</Link>
         <Link to="/login">Login</Link>
         <Link to="/register">Register</Link>
       </nav>
@@ -109,6 +111,31 @@ function MarketplaceLayout() {
   )
 }
 
+function MarketsLayout() {
+  const { user, logout } = useAuth()
+
+  return (
+    <div className="app">
+      <header>
+        <h1>Market Prices</h1>
+        {user && <p>{user.full_name || user.username} · {user.role === 'FARMER' ? 'Farmer' : 'Buyer'}</p>}
+      </header>
+      <nav>
+        <Link to="/">Home</Link>
+        <Link to="/markets/prices">Market Prices</Link>
+        <Link to="/marketplace">Marketplace</Link>
+        {user?.role === 'FARMER' && <Link to="/farms">Farms</Link>}
+        {user && (
+          <button type="button" className="btn-ghost" onClick={() => void logout()}>
+            Log out
+          </button>
+        )}
+      </nav>
+      <Outlet />
+    </div>
+  )
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -136,6 +163,9 @@ function App() {
             <Route index element={<MarketplacePage />} />
             <Route path="my-listings" element={<MyListingsPage />} />
             <Route path="orders" element={<OrdersPage />} />
+          </Route>
+          <Route path="/markets/prices" element={<MarketsLayout />}>
+            <Route index element={<MarketPricesPage />} />
           </Route>
         </Routes>
       </AuthProvider>

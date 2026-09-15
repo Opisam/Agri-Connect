@@ -14,7 +14,9 @@ import { ExpensesScreen } from './src/screens/ExpensesScreen';
 import { HarvestsScreen } from './src/screens/HarvestsScreen';
 import { SalesScreen } from './src/screens/SalesScreen';
 import { MarketplaceScreen } from './src/screens/MarketplaceScreen';
+import { MarketPricesScreen } from './src/screens/MarketPricesScreen';
 import { OrdersScreen } from './src/screens/OrdersScreen';
+import { PriceHistoryScreen } from './src/screens/PriceHistoryScreen';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -29,6 +31,8 @@ export type RootStackParamList = {
   Sales: { farmId: number };
   Marketplace: undefined;
   Orders: undefined;
+  MarketPrices: undefined;
+  PriceHistory: { product: string; marketId: number; marketName: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -93,6 +97,16 @@ export default function App() {
             name="Orders"
             component={OrdersScreen}
             options={{ title: 'Orders' }}
+          />
+          <Stack.Screen
+            name="MarketPrices"
+            component={MarketPricesScreen}
+            options={{ title: 'Market Prices' }}
+          />
+          <Stack.Screen
+            name="PriceHistory"
+            component={PriceHistoryScreen}
+            options={{ title: 'Price History' }}
           />
         </Stack.Navigator>
       </NavigationContainer>
