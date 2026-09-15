@@ -148,6 +148,9 @@ export const farmStyles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 20,
   },
+  itemMuted: {
+    opacity: 0.65,
+  },
   chips: {
     flexDirection: 'row',
     flexWrap: 'wrap',

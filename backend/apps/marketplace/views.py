@@ -22,6 +22,7 @@ from apps.marketplace.serializers import (
     OrderSerializer,
     ProduceCategorySerializer,
 )
+from apps.notifications.services import notify_order_received
 
 
 class ProduceCategoryListView(ListAPIView):
@@ -115,8 +116,9 @@ class OrderListCreateView(ListCreateAPIView):
         return queryset.filter(buyer=user)
 
     def perform_create(self, serializer) -> None:
-        """Set the creating buyer as the order owner."""
-        serializer.save(buyer=self.request.user)
+        """Set the creating buyer as the order owner and notify the farmer."""
+        order = serializer.save(buyer=self.request.user)
+        notify_order_received(order)
 
 
 class OrderDetailView(RetrieveUpdateAPIView):

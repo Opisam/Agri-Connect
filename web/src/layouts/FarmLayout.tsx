@@ -1,6 +1,7 @@
 import { Link, Navigate, Outlet } from 'react-router-dom'
 
 import { useAuth } from '../auth/useAuth'
+import { NotificationBell } from '../components/NotificationBell'
 
 export function FarmLayout() {
   const { user, logout } = useAuth()
@@ -31,6 +32,7 @@ export function FarmLayout() {
         <Link to="/marketplace">Marketplace</Link>
         <Link to="/markets/prices">Market Prices</Link>
         <Link to="/guides">Guides</Link>
+        <NotificationBell />
         <button type="button" className="btn-ghost" onClick={() => void logout()}>
           Log out
         </button>

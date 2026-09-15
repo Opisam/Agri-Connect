@@ -186,6 +186,9 @@ class Order(models.Model):
             if farmer_notes:
                 self.farmer_notes = farmer_notes
             self.save(update_fields=["status", "farmer_notes", "updated_at"])
+        from apps.notifications.services import notify_order_accepted
+
+        notify_order_accepted(self)
 
     def reject(self, farmer_notes: str | None = None) -> None:
         """Mark a pending order as rejected without touching the listing."""
@@ -196,6 +199,9 @@ class Order(models.Model):
             if farmer_notes:
                 self.farmer_notes = farmer_notes
             self.save(update_fields=["status", "farmer_notes", "updated_at"])
+        from apps.notifications.services import notify_order_rejected
+
+        notify_order_rejected(self)
 
     def cancel(self) -> None:
         """Cancel the order, restoring any deducted quantity."""
@@ -218,3 +224,6 @@ class Order(models.Model):
                 raise ValidationError("Only accepted orders can be completed.")
             self.status = self.Statuses.COMPLETED
             self.save(update_fields=["status", "updated_at"])
+        from apps.notifications.services import notify_order_completed
+
+        notify_order_completed(self)

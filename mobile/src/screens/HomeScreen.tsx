@@ -39,13 +39,19 @@ export function HomeScreen() {
           <Text style={styles.buttonText}>Guides</Text>
         </Pressable>
         {user && (
-          <>
-            <Pressable
-              style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-              onPress={() => navigation.navigate('Orders')}
-            >
-              <Text style={styles.buttonText}>My Orders</Text>
-            </Pressable>
+            <>
+                <Pressable
+                  style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+                  onPress={() => navigation.navigate('Notifications')}
+                >
+                  <Text style={styles.buttonText}>Notifications</Text>
+                </Pressable>
+                <Pressable
+                  style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+                  onPress={() => navigation.navigate('Orders')}
+                >
+                  <Text style={styles.buttonText}>My Orders</Text>
+                </Pressable>
             {user.role === 'FARMER' && (
               <Pressable
                 style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}

@@ -342,6 +342,15 @@ button {
   color: var(--muted);
 }
 
+.notification-bell a {
+  font-weight: 600;
+  color: var(--brand-dark);
+}
+
+.notification.is-read {
+  opacity: 0.7;
+}
+
 /* Stat / dashboard cards */
 .stat-grid {
   display: grid;

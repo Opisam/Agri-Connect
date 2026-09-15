@@ -3,6 +3,7 @@ import { BrowserRouter, Link, Navigate, Outlet, Route, Routes } from 'react-rout
 import { AuthProvider } from './auth/AuthContext'
 import { useAuth } from './auth/useAuth'
 import { ArticlePage } from './pages/ArticlePage'
+import { NotificationBell } from './components/NotificationBell'
 import { FarmLayout } from './layouts/FarmLayout'
 import { ActivitiesPage } from './pages/ActivitiesPage'
 import { CropsPage } from './pages/CropsPage'
@@ -15,6 +16,7 @@ import { LoginPage } from './pages/LoginPage'
 import { MarketplacePage } from './pages/MarketplacePage'
 import { MarketPricesPage } from './pages/MarketPricesPage'
 import { MyListingsPage } from './pages/MyListingsPage'
+import { NotificationsPage } from './pages/NotificationsPage'
 import { OrdersPage } from './pages/OrdersPage'
 import { ProfitLossPage } from './pages/ProfitLossPage'
 import { RegisterPage } from './pages/RegisterPage'
@@ -59,6 +61,7 @@ function Dashboard() {
       </header>
       <nav>
         <Link to="/">Home</Link>
+        {user && <NotificationBell />}
         <button type="button" className="btn-ghost" onClick={() => void logout()}>
           Log out
         </button>
@@ -103,6 +106,7 @@ function MarketplaceLayout() {
         {user?.role === 'FARMER' && <Link to="/marketplace/my-listings">My Listings</Link>}
         {user && <Link to="/marketplace/orders">Orders</Link>}
         {user?.role === 'FARMER' && <Link to="/farms">Farms</Link>}
+        {user && <NotificationBell />}
         {user && (
           <button type="button" className="btn-ghost" onClick={() => void logout()}>
             Log out
@@ -129,6 +133,7 @@ function MarketsLayout() {
         <Link to="/marketplace">Marketplace</Link>
         <Link to="/guides">Guides</Link>
         {user?.role === 'FARMER' && <Link to="/farms">Farms</Link>}
+        {user && <NotificationBell />}
         {user && (
           <button type="button" className="btn-ghost" onClick={() => void logout()}>
             Log out
@@ -155,6 +160,7 @@ function GuidesLayout() {
         <Link to="/marketplace">Marketplace</Link>
         <Link to="/markets/prices">Market Prices</Link>
         {user?.role === 'FARMER' && <Link to="/farms">Farms</Link>}
+        {user && <NotificationBell />}
         {user && (
           <button type="button" className="btn-ghost" onClick={() => void logout()}>
             Log out
@@ -201,6 +207,7 @@ function App() {
             <Route index element={<GuidesListPage />} />
             <Route path=":articleId" element={<ArticlePage />} />
           </Route>
+          <Route path="/notifications" element={<NotificationsPage />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
