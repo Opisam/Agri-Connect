@@ -2,12 +2,14 @@ import { BrowserRouter, Link, Navigate, Outlet, Route, Routes } from 'react-rout
 
 import { AuthProvider } from './auth/AuthContext'
 import { useAuth } from './auth/useAuth'
+import { ArticlePage } from './pages/ArticlePage'
 import { FarmLayout } from './layouts/FarmLayout'
 import { ActivitiesPage } from './pages/ActivitiesPage'
 import { CropsPage } from './pages/CropsPage'
 import { ExpensesPage } from './pages/ExpensesPage'
 import { FarmsPage } from './pages/FarmsPage'
 import { FieldsPage } from './pages/FieldsPage'
+import { GuidesListPage } from './pages/GuidesListPage'
 import { HarvestsPage } from './pages/HarvestsPage'
 import { LoginPage } from './pages/LoginPage'
 import { MarketplacePage } from './pages/MarketplacePage'
@@ -29,6 +31,7 @@ function Home() {
         <Link to="/">Home</Link>
         <Link to="/marketplace">Marketplace</Link>
         <Link to="/markets/prices">Market Prices</Link>
+        <Link to="/guides">Guides</Link>
         <Link to="/login">Login</Link>
         <Link to="/register">Register</Link>
       </nav>
@@ -124,6 +127,33 @@ function MarketsLayout() {
         <Link to="/">Home</Link>
         <Link to="/markets/prices">Market Prices</Link>
         <Link to="/marketplace">Marketplace</Link>
+        <Link to="/guides">Guides</Link>
+        {user?.role === 'FARMER' && <Link to="/farms">Farms</Link>}
+        {user && (
+          <button type="button" className="btn-ghost" onClick={() => void logout()}>
+            Log out
+          </button>
+        )}
+      </nav>
+      <Outlet />
+    </div>
+  )
+}
+
+function GuidesLayout() {
+  const { user, logout } = useAuth()
+
+  return (
+    <div className="app">
+      <header>
+        <h1>Agricultural Guides</h1>
+        {user && <p>{user.full_name || user.username} · {user.role === 'FARMER' ? 'Farmer' : 'Buyer'}</p>}
+      </header>
+      <nav>
+        <Link to="/">Home</Link>
+        <Link to="/guides">Guides</Link>
+        <Link to="/marketplace">Marketplace</Link>
+        <Link to="/markets/prices">Market Prices</Link>
         {user?.role === 'FARMER' && <Link to="/farms">Farms</Link>}
         {user && (
           <button type="button" className="btn-ghost" onClick={() => void logout()}>
@@ -166,6 +196,10 @@ function App() {
           </Route>
           <Route path="/markets/prices" element={<MarketsLayout />}>
             <Route index element={<MarketPricesPage />} />
+          </Route>
+          <Route path="/guides" element={<GuidesLayout />}>
+            <Route index element={<GuidesListPage />} />
+            <Route path=":articleId" element={<ArticlePage />} />
           </Route>
         </Routes>
       </AuthProvider>

@@ -128,6 +128,12 @@ export const farmStyles = StyleSheet.create({
     fontSize: 13,
     color: '#4a6b4a',
   },
+  bodyText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#1b2a1b',
+    marginTop: 8,
+  },
   itemActions: {
     flexDirection: 'row',
     gap: 10,

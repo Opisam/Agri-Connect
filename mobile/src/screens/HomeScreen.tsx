@@ -32,6 +32,12 @@ export function HomeScreen() {
         >
           <Text style={styles.buttonText}>Market Prices</Text>
         </Pressable>
+        <Pressable
+          style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+          onPress={() => navigation.navigate('Guides')}
+        >
+          <Text style={styles.buttonText}>Guides</Text>
+        </Pressable>
         {user && (
           <>
             <Pressable

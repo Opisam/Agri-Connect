@@ -38,3 +38,8 @@ test('shows the market prices link to logged-out users', async () => {
   const { getByText } = await render(<HomeScreen />);
   expect(getByText('Market Prices')).toBeOnTheScreen();
 });
+
+test('shows the guides link to logged-out users', async () => {
+  const { getByText } = await render(<HomeScreen />);
+  expect(getByText('Guides')).toBeOnTheScreen();
+});

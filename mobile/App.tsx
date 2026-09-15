@@ -17,6 +17,8 @@ import { MarketplaceScreen } from './src/screens/MarketplaceScreen';
 import { MarketPricesScreen } from './src/screens/MarketPricesScreen';
 import { OrdersScreen } from './src/screens/OrdersScreen';
 import { PriceHistoryScreen } from './src/screens/PriceHistoryScreen';
+import { GuidesScreen } from './src/screens/GuidesScreen';
+import { ArticleScreen } from './src/screens/ArticleScreen';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -33,6 +35,8 @@ export type RootStackParamList = {
   Orders: undefined;
   MarketPrices: undefined;
   PriceHistory: { product: string; marketId: number; marketName: string };
+  Guides: undefined;
+  Article: { articleId: number; title: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -107,6 +111,16 @@ export default function App() {
             name="PriceHistory"
             component={PriceHistoryScreen}
             options={{ title: 'Price History' }}
+          />
+          <Stack.Screen
+            name="Guides"
+            component={GuidesScreen}
+            options={{ title: 'Guides' }}
+          />
+          <Stack.Screen
+            name="Article"
+            component={ArticleScreen}
+            options={({ route }) => ({ title: route.params.title })}
           />
         </Stack.Navigator>
       </NavigationContainer>
