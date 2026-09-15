@@ -1,4 +1,26 @@
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Link, Navigate, Outlet, Route, Routes } from 'react-router-dom'
+
+import { AuthProvider } from './auth/AuthContext'
+import { useAuth } from './auth/useAuth'
+import { ArticlePage } from './pages/ArticlePage'
+import { NotificationBell } from './components/NotificationBell'
+import { FarmLayout } from './layouts/FarmLayout'
+import { ActivitiesPage } from './pages/ActivitiesPage'
+import { CropsPage } from './pages/CropsPage'
+import { ExpensesPage } from './pages/ExpensesPage'
+import { FarmsPage } from './pages/FarmsPage'
+import { FieldsPage } from './pages/FieldsPage'
+import { GuidesListPage } from './pages/GuidesListPage'
+import { HarvestsPage } from './pages/HarvestsPage'
+import { LoginPage } from './pages/LoginPage'
+import { MarketplacePage } from './pages/MarketplacePage'
+import { MarketPricesPage } from './pages/MarketPricesPage'
+import { MyListingsPage } from './pages/MyListingsPage'
+import { NotificationsPage } from './pages/NotificationsPage'
+import { OrdersPage } from './pages/OrdersPage'
+import { ProfitLossPage } from './pages/ProfitLossPage'
+import { RegisterPage } from './pages/RegisterPage'
+import { SalesPage } from './pages/SalesPage'
 
 function Home() {
   return (
@@ -9,25 +31,143 @@ function Home() {
       </header>
       <nav>
         <Link to="/">Home</Link>
+        <Link to="/marketplace">Marketplace</Link>
+        <Link to="/markets/prices">Market Prices</Link>
+        <Link to="/guides">Guides</Link>
         <Link to="/login">Login</Link>
         <Link to="/register">Register</Link>
       </nav>
       <main>
-        <p>Welcome to AgriConnect. Platform infrastructure is being set up.</p>
+        <p>Welcome to AgriConnect. Find produce, manage your farm, and understand your finances.</p>
       </main>
     </div>
   )
 }
 
-function Placeholder() {
+function Dashboard() {
+  const { user, logout } = useAuth()
+
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+
   return (
     <div className="app">
+      <header>
+        <h1>Welcome, {user.full_name || user.username}</h1>
+        <p>
+          {user.role === 'FARMER' ? 'Farmer' : 'Buyer'} account · {user.phone}
+        </p>
+      </header>
       <nav>
         <Link to="/">Home</Link>
+        {user && <NotificationBell />}
+        <button type="button" className="btn-ghost" onClick={() => void logout()}>
+          Log out
+        </button>
       </nav>
       <main>
-        <p>This page is under construction.</p>
+        <p>Welcome back, {user.full_name || user.username}.</p>
+        {user.role === 'FARMER' && (
+          <p>
+            Manage your <Link to="/farms">farms</Link>,{' '}
+            <Link to="/crops">crops</Link> and{' '}
+            <Link to="/marketplace/my-listings">marketplace listings</Link>.
+          </p>
+        )}
+        {user.role === 'BUYER' && (
+          <p>
+            Browse the <Link to="/marketplace">marketplace</Link> to buy fresh produce.
+          </p>
+        )}
+        {user.location && (
+          <p>
+            {user.location}
+            {user.district ? ` · ${user.district}` : ''}
+          </p>
+        )}
       </main>
+    </div>
+  )
+}
+
+function MarketplaceLayout() {
+  const { user, logout } = useAuth()
+
+  return (
+    <div className="app">
+      <header>
+        <h1>Marketplace</h1>
+        {user && <p>{user.full_name || user.username} · {user.role === 'FARMER' ? 'Farmer' : 'Buyer'}</p>}
+      </header>
+      <nav>
+        <Link to="/">Home</Link>
+        <Link to="/marketplace">Browse</Link>
+        {user?.role === 'FARMER' && <Link to="/marketplace/my-listings">My Listings</Link>}
+        {user && <Link to="/marketplace/orders">Orders</Link>}
+        {user?.role === 'FARMER' && <Link to="/farms">Farms</Link>}
+        {user && <NotificationBell />}
+        {user && (
+          <button type="button" className="btn-ghost" onClick={() => void logout()}>
+            Log out
+          </button>
+        )}
+      </nav>
+      <Outlet />
+    </div>
+  )
+}
+
+function MarketsLayout() {
+  const { user, logout } = useAuth()
+
+  return (
+    <div className="app">
+      <header>
+        <h1>Market Prices</h1>
+        {user && <p>{user.full_name || user.username} · {user.role === 'FARMER' ? 'Farmer' : 'Buyer'}</p>}
+      </header>
+      <nav>
+        <Link to="/">Home</Link>
+        <Link to="/markets/prices">Market Prices</Link>
+        <Link to="/marketplace">Marketplace</Link>
+        <Link to="/guides">Guides</Link>
+        {user?.role === 'FARMER' && <Link to="/farms">Farms</Link>}
+        {user && <NotificationBell />}
+        {user && (
+          <button type="button" className="btn-ghost" onClick={() => void logout()}>
+            Log out
+          </button>
+        )}
+      </nav>
+      <Outlet />
+    </div>
+  )
+}
+
+function GuidesLayout() {
+  const { user, logout } = useAuth()
+
+  return (
+    <div className="app">
+      <header>
+        <h1>Agricultural Guides</h1>
+        {user && <p>{user.full_name || user.username} · {user.role === 'FARMER' ? 'Farmer' : 'Buyer'}</p>}
+      </header>
+      <nav>
+        <Link to="/">Home</Link>
+        <Link to="/guides">Guides</Link>
+        <Link to="/marketplace">Marketplace</Link>
+        <Link to="/markets/prices">Market Prices</Link>
+        {user?.role === 'FARMER' && <Link to="/farms">Farms</Link>}
+        {user && <NotificationBell />}
+        {user && (
+          <button type="button" className="btn-ghost" onClick={() => void logout()}>
+            Log out
+          </button>
+        )}
+      </nav>
+      <Outlet />
     </div>
   )
 }
@@ -35,11 +175,41 @@ function Placeholder() {
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Placeholder />} />
-        <Route path="/register" element={<Placeholder />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/farms" element={<FarmLayout />}>
+            <Route index element={<FarmsPage />} />
+            <Route path=":farmId/fields" element={<FieldsPage />} />
+          </Route>
+          <Route path="/crops" element={<FarmLayout />}>
+            <Route index element={<CropsPage />} />
+            <Route path=":cropId/activities" element={<ActivitiesPage />} />
+          </Route>
+          <Route path="/finance" element={<FarmLayout />}>
+            <Route index element={<ProfitLossPage />} />
+            <Route path="expenses" element={<ExpensesPage />} />
+            <Route path="harvests" element={<HarvestsPage />} />
+            <Route path="sales" element={<SalesPage />} />
+          </Route>
+          <Route path="/marketplace" element={<MarketplaceLayout />}>
+            <Route index element={<MarketplacePage />} />
+            <Route path="my-listings" element={<MyListingsPage />} />
+            <Route path="orders" element={<OrdersPage />} />
+          </Route>
+          <Route path="/markets/prices" element={<MarketsLayout />}>
+            <Route index element={<MarketPricesPage />} />
+          </Route>
+          <Route path="/guides" element={<GuidesLayout />}>
+            <Route index element={<GuidesListPage />} />
+            <Route path=":articleId" element={<ArticlePage />} />
+          </Route>
+          <Route path="/notifications" element={<NotificationsPage />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   )
 }
