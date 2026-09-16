@@ -75,31 +75,33 @@ export function MarketplacePage() {
 
   return (
     <div className="content">
-      <div>
-        <h1 className="page-title">Browse Produce</h1>
-        <p className="page-subtitle">Find fresh produce from local farmers.</p>
+      <div className="agri-page-header">
+        <h1><i className="bi bi-basket me-2 text-success" />Browse Produce</h1>
+        <p>Find fresh produce from local farmers.</p>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
+      <div className="agri-filter-bar">
         <form
-          className="form-grid"
+          className="row g-2"
           onSubmit={(e) => {
             e.preventDefault()
           }}
         >
-          <label className="form-field">
-            Search
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Product, location or district"
-            />
-          </label>
-          <label className="form-field">
-            Category
-            <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+          <div className="col-md-8">
+            <div className="input-group">
+              <span className="input-group-text bg-white"><i className="bi bi-search text-muted" /></span>
+              <input
+                className="form-control"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Product, location or district"
+              />
+            </div>
+          </div>
+          <div className="col-md-4">
+            <select className="form-select" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
               <option value="">All categories</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -107,96 +109,110 @@ export function MarketplacePage() {
                 </option>
               ))}
             </select>
-          </label>
+          </div>
         </form>
-      </section>
+      </div>
 
-      <section className="section">
+      <div>
         {filtered.length === 0 ? (
-          <div className="empty">No active listings match your search.</div>
+          <div className="agri-empty">
+            <i className="bi bi-basket2" />
+            No active listings match your search.
+          </div>
         ) : (
-          <div className="list">
+          <div className="row g-4">
             {filtered.map((listing) => (
-              <div key={listing.id} className="list-item">
-                <div>
-                  <h3>
-                    {listing.product_name}
-                    <span className="badge" style={{ marginLeft: '0.5rem' }}>
-                      {listing.category_name}
-                    </span>
-                  </h3>
-                  <p>
-                    UGX {Number(listing.price_per_unit).toLocaleString()} / {listing.unit}
-                    {' · '}
-                    {listing.quantity_remaining} {listing.unit} available
-                    {' · '}
-                    {listing.location}, {listing.district}
-                  </p>
-                  {listing.description && <p>{listing.description}</p>}
-                  <p className="text-muted">
-                    Listed by {listing.farmer_name} · available from {listing.available_from}
-                  </p>
-                </div>
-                {isBuyer && (
-                  <div className="item-actions" style={{ flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
-                    {orderingId === listing.id ? (
-                      <form
-                        style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end' }}
-                        onSubmit={(e) => {
-                          e.preventDefault()
-                          void onOrder(listing.id)
-                        }}
-                      >
-                        <input
-                          type="number"
-                          step="0.01"
-                          min="0.01"
-                          max={listing.quantity_remaining}
-                          value={orderQty}
-                          onChange={(e) => setOrderQty(e.target.value)}
-                          placeholder={`Max ${listing.quantity_remaining}`}
-                          style={{ width: '120px' }}
-                          required
-                        />
-                        <input
-                          value={orderNotes}
-                          onChange={(e) => setOrderNotes(e.target.value)}
-                          placeholder="Notes (optional)"
-                          style={{ width: '200px' }}
-                        />
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                          <button type="submit" className="btn-primary btn-sm" disabled={busy}>
-                            {busy ? 'Placing…' : 'Confirm'}
-                          </button>
-                          <button
-                            type="button"
-                            className="btn-ghost btn-sm"
-                            onClick={() => {
-                              setOrderingId(null)
-                              setOrderQty('')
-                              setOrderNotes('')
+              <div key={listing.id} className="col-md-6 col-lg-4">
+                <div className="agri-card card h-100">
+                  <div className="card-body d-flex flex-column">
+                    <h5 className="fw-bold mb-2">
+                      <i className="bi bi-box-seam me-1 text-success" />
+                      {listing.product_name}
+                      <span className="badge badge-agri ms-2">{listing.category_name}</span>
+                    </h5>
+                    <p className="mb-2" style={{ color: '#1b5e20', fontWeight: 700, fontSize: '1.1rem' }}>
+                      UGX {Number(listing.price_per_unit).toLocaleString()}<span className="text-muted fs-6 fw-normal"> / {listing.unit}</span>
+                    </p>
+                    <p className="text-muted mb-1">
+                      <i className="bi bi-box me-1" />
+                      {listing.quantity_remaining} {listing.unit} available
+                    </p>
+                    <p className="text-muted mb-1">
+                      <i className="bi bi-geo-alt me-1" />
+                      {listing.location}, {listing.district}
+                    </p>
+                    {listing.description && <p className="mb-1">{listing.description}</p>}
+                    <p className="text-muted small mb-3">
+                      <i className="bi bi-person me-1" />Listed by {listing.farmer_name} ·{' '}
+                      <i className="bi bi-calendar-event me-1" />from {listing.available_from}
+                    </p>
+                    {isBuyer && (
+                      <div className="mt-auto">
+                        {orderingId === listing.id ? (
+                          <form
+                            className="d-flex flex-column gap-2"
+                            onSubmit={(e) => {
+                              e.preventDefault()
+                              void onOrder(listing.id)
                             }}
                           >
-                            Cancel
+                            <input
+                              type="number"
+                              step="0.01"
+                              min="0.01"
+                              max={listing.quantity_remaining}
+                              className="form-control"
+                              value={orderQty}
+                              onChange={(e) => setOrderQty(e.target.value)}
+                              placeholder={`Max ${listing.quantity_remaining}`}
+                              required
+                            />
+                            <input
+                              className="form-control"
+                              value={orderNotes}
+                              onChange={(e) => setOrderNotes(e.target.value)}
+                              placeholder="Notes (optional)"
+                            />
+                            <div className="d-flex gap-2">
+                              <button type="submit" className="btn-agri btn-sm flex-grow-1" disabled={busy}>
+                                <i className="bi bi-check-lg me-1" />{busy ? 'Placing…' : 'Confirm'}
+                              </button>
+                              <button
+                                type="button"
+                                className="btn-agri-outline btn-sm"
+                                onClick={() => {
+                                  setOrderingId(null)
+                                  setOrderQty('')
+                                  setOrderNotes('')
+                                }}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </form>
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn-agri w-100"
+                            onClick={() => setOrderingId(listing.id)}
+                          >
+                            <i className="bi bi-cart-plus me-1" />Order
                           </button>
-                        </div>
-                      </form>
-                    ) : (
-                      <button
-                        type="button"
-                        className="btn-primary btn-sm"
-                        onClick={() => setOrderingId(listing.id)}
-                      >
-                        Order
-                      </button>
+                        )}
+                      </div>
+                    )}
+                    {!isBuyer && (
+                      <div className="mt-auto small text-muted">
+                        <i className="bi bi-info-circle me-1" />Log in as a buyer to place an order.
+                      </div>
                     )}
                   </div>
-                )}
+                </div>
               </div>
             ))}
           </div>
         )}
-      </section>
+      </div>
     </div>
   )
 }

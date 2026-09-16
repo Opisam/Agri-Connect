@@ -89,117 +89,169 @@ export function FarmsPage() {
 
   return (
     <div className="content">
-      <div>
-        <h1 className="page-title">My Farms</h1>
-        <p className="page-subtitle">Create and manage the farms you own.</p>
+      <div className="agri-page-header">
+        <h1><i className="bi bi-house-door me-2 text-success" />My Farms</h1>
+        <p>Create and manage the farms you own.</p>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
-        <h2>{editingId ? 'Edit Farm' : 'Add a Farm'}</h2>
-        <form onSubmit={onSubmit} className="form-grid">
-          <label className="form-field">
-            Farm name
-            <input value={form.name} onChange={set('name')} required placeholder="e.g. Okello Family Farm" />
-          </label>
-          <label className="form-field">
-            Location
-            <input value={form.location} onChange={set('location')} required placeholder="e.g. Opit, Gulu" />
-          </label>
-          <label className="form-field">
-            District
-            <input value={form.district} onChange={set('district')} required placeholder="e.g. Gulu" />
-          </label>
-          <label className="form-field">
-            Subcounty
-            <input value={form.subcounty} onChange={set('subcounty')} placeholder="e.g. Paicho" />
-          </label>
-          <label className="form-field">
-            Size
-            <input
-              type="number"
-              step="0.01"
-              min="0.01"
-              value={form.size}
-              onChange={set('size')}
-              required
-              placeholder="e.g. 10"
-            />
-          </label>
-          <label className="form-field">
-            Size unit
-            <select value={form.size_unit} onChange={set('size_unit')}>
-              {SIZE_UNITS.map((u) => (
-                <option key={u.value} value={u.value}>{u.label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field full">
-            Farm type
-            <select value={form.farm_type} onChange={set('farm_type')}>
-              {FARM_TYPES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field full">
-            Description
-            <textarea value={form.description} onChange={set('description')} rows={2} placeholder="Optional notes" />
-          </label>
-          <div className="form-actions">
-            <button type="submit" className="btn-primary" disabled={busy}>
-              {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add farm'}
-            </button>
-            {editingId && (
-              <button
-                type="button"
-                className="btn-ghost"
-                onClick={() => {
-                  setEditingId(null)
-                  setForm(EMPTY_FORM)
-                }}
-              >
-                Cancel
-              </button>
-            )}
-          </div>
-        </form>
-      </section>
-
-      <section className="section">
-        <h2>All Farms</h2>
-        {farms.length === 0 ? (
-          <div className="empty">No farms yet. Add your first farm above.</div>
-        ) : (
-          <div className="list">
-            {farms.map((farm) => (
-              <div key={farm.id} className="list-item">
-                <div>
-                  <h3>{farm.name}</h3>
-                  <p>
-                    {farm.location}, {farm.district} · {farm.size} {farm.size_unit} · <span className="badge">{farm.farm_type.replace('_', ' ')}</span>
-                  </p>
-                  <p>
-                    {farm.field_count} field{farm.field_count === 1 ? '' : 's'}
-                  </p>
-                </div>
-                <div className="item-actions">
-                  <Link to={`/farms/${farm.id}/fields`} className="btn-ghost btn-sm">
-                    Fields
-                  </Link>
-                  <button type="button" className="btn-ghost btn-sm" onClick={() => onEdit(farm)}>
-                    Edit
-                  </button>
-                  <button type="button" className="btn-danger btn-sm" onClick={() => void onDelete(farm.id)}>
-                    Delete
-                  </button>
-                </div>
+      <div className="agri-card card agri-section">
+        <div className="card-header">
+          <i className="bi bi-plus-circle me-1 text-success" />
+          {editingId ? 'Edit Farm' : 'Add a Farm'}
+        </div>
+        <div className="card-body">
+          <form onSubmit={onSubmit}>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className="form-label">Farm name</label>
+                <input
+                  className="form-control"
+                  value={form.name}
+                  onChange={set('name')}
+                  required
+                  placeholder="e.g. Okello Family Farm"
+                />
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+              <div className="col-md-6">
+                <label className="form-label">Location</label>
+                <input
+                  className="form-control"
+                  value={form.location}
+                  onChange={set('location')}
+                  required
+                  placeholder="e.g. Opit, Gulu"
+                />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">District</label>
+                <input
+                  className="form-control"
+                  value={form.district}
+                  onChange={set('district')}
+                  required
+                  placeholder="e.g. Gulu"
+                />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Subcounty</label>
+                <input
+                  className="form-control"
+                  value={form.subcounty}
+                  onChange={set('subcounty')}
+                  placeholder="e.g. Paicho"
+                />
+              </div>
+              <div className="col-md-2">
+                <label className="form-label">Size</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  className="form-control"
+                  value={form.size}
+                  onChange={set('size')}
+                  required
+                  placeholder="e.g. 10"
+                />
+              </div>
+              <div className="col-md-2">
+                <label className="form-label">Size unit</label>
+                <select className="form-select" value={form.size_unit} onChange={set('size_unit')}>
+                  {SIZE_UNITS.map((u) => (
+                    <option key={u.value} value={u.value}>{u.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-12">
+                <label className="form-label">Farm type</label>
+                <select className="form-select" value={form.farm_type} onChange={set('farm_type')}>
+                  {FARM_TYPES.map((t) => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-12">
+                <label className="form-label">Description</label>
+                <textarea
+                  className="form-control"
+                  value={form.description}
+                  onChange={set('description')}
+                  rows={2}
+                  placeholder="Optional notes"
+                />
+              </div>
+            </div>
+            <div className="d-flex gap-2 mt-3">
+              <button type="submit" className="btn-agri" disabled={busy}>
+                <i className="bi bi-check-lg me-1" />
+                {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add farm'}
+              </button>
+              {editingId && (
+                <button
+                  type="button"
+                  className="btn-agri-outline"
+                  onClick={() => {
+                    setEditingId(null)
+                    setForm(EMPTY_FORM)
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="agri-card card">
+        <div className="card-header">
+          <i className="bi bi-list-ul me-1 text-success" />All Farms ({farms.length})
+        </div>
+        <div className="card-body">
+          {farms.length === 0 ? (
+            <div className="agri-empty">
+              <i className="bi bi-house-x" />
+              No farms yet. Add your first farm above.
+            </div>
+          ) : (
+            <div className="d-flex flex-column gap-2">
+              {farms.map((farm) => (
+                <div key={farm.id} className="agri-list-item">
+                  <div>
+                    <h5>
+                      <i className="bi bi-tree me-1 text-success" />
+                      {farm.name}
+                    </h5>
+                    <p className="mb-1">
+                      <span className="badge badge-agri">{farm.farm_type.replace('_', ' ')}</span>
+                    </p>
+                    <p className="mb-0">
+                      <i className="bi bi-geo-alt me-1" />
+                      {farm.location}, {farm.district} · {farm.size} {farm.size_unit}
+                    </p>
+                    <p className="mb-0">
+                      {`${farm.field_count} field${farm.field_count === 1 ? '' : 's'}`}
+                    </p>
+                  </div>
+                  <div className="list-actions">
+                    <Link to={`/farms/${farm.id}/fields`} className="btn-agri-outline btn-sm">
+                      <i className="bi bi-grid me-1" />Fields
+                    </Link>
+                    <button type="button" className="btn-agri-outline btn-sm" onClick={() => onEdit(farm)}>
+                      <i className="bi bi-pencil me-1" />Edit
+                    </button>
+                    <button type="button" className="btn-agri-danger btn-sm" onClick={() => void onDelete(farm.id)}>
+                      <i className="bi bi-trash me-1" />Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

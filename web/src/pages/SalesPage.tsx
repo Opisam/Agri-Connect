@@ -119,133 +119,135 @@ export function SalesPage() {
 
   return (
     <div className="content">
-      <div>
-        <h1 className="page-title">Sales</h1>
-        <p className="page-subtitle">Record the produce you have sold.</p>
+      <div className="agri-page-header">
+        <h1><i className="bi bi-tag me-2 text-success" />Sales</h1>
+        <p>Record the produce you have sold.</p>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
-        <h2>{editingId ? 'Edit Sale' : 'Record a Sale'}</h2>
-        <form onSubmit={onSubmit} className="form-grid">
-          <label className="form-field">
-            Farm
-            <select value={form.farm} onChange={set('farm')}>
-              <option value={0}>Choose a farm…</option>
-              {farms.map((farm) => (
-                <option key={farm.id} value={farm.id}>{farm.name}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Crop (optional)
-            <select value={form.crop ?? 0} onChange={set('crop')}>
-              <option value={0}>No specific crop</option>
-              {farmCrops.map((crop) => (
-                <option key={crop.id} value={crop.id}>
-                  {crop.crop_type_display}{crop.variety ? ` — ${crop.variety}` : ''}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Quantity
-            <input
-              type="number"
-              step="0.01"
-              min="0.01"
-              value={form.quantity}
-              onChange={set('quantity')}
-              required
-              placeholder="e.g. 500"
-            />
-          </label>
-          <label className="form-field">
-            Unit
-            <select value={form.unit} onChange={set('unit')}>
-              {UNITS.map((u) => (
-                <option key={u.value} value={u.value}>{u.label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Unit price (UGX)
-            <input
-              type="number"
-              step="0.01"
-              min="0.01"
-              value={form.unit_price}
-              onChange={set('unit_price')}
-              required
-              placeholder="e.g. 1400"
-            />
-          </label>
-          <label className="form-field">
-            Sale date
-            <input type="date" value={form.sale_date} onChange={set('sale_date')} required />
-          </label>
-          <label className="form-field">
-            Buyer name (optional)
-            <input value={form.buyer_name} onChange={set('buyer_name')} placeholder="e.g. Lira Market Agent" />
-          </label>
-          <label className="form-field">
-            Buyer contact (optional)
-            <input value={form.buyer_contact} onChange={set('buyer_contact')} placeholder="e.g. +256701234567" />
-          </label>
-          <label className="form-field full">
-            Notes
-            <textarea value={form.notes} onChange={set('notes')} rows={2} placeholder="Optional" />
-          </label>
-          <div className="form-actions">
-            <button type="submit" className="btn-primary" disabled={busy}>
-              {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add sale'}
-            </button>
-            {editingId && (
-              <button
-                type="button"
-                className="btn-ghost"
-                onClick={() => {
-                  setEditingId(null)
-                  setForm(EMPTY_FORM)
-                }}
-              >
-                Cancel
-              </button>
-            )}
-          </div>
-        </form>
-      </section>
-
-      <section className="section">
-        <h2>All Sales</h2>
-        {sales.length === 0 ? (
-          <div className="empty">No sales yet. Record your first sale above.</div>
-        ) : (
-          <div className="list">
-            {sales.map((sale) => (
-              <div key={sale.id} className="list-item">
-                <div>
-                  <h3>UGX {Number(sale.total_amount).toLocaleString()}</h3>
-                  <p>
-                    {Number(sale.quantity).toLocaleString()} {sale.unit} × UGX {Number(sale.unit_price).toLocaleString()}
-                    {sale.crop_name ? ` · ${sale.crop_name}` : ''} · {sale.farm_name} · {sale.sale_date}
-                  </p>
-                  {sale.buyer_name && <p className="text-muted">Buyer: {sale.buyer_name}</p>}
-                </div>
-                <div className="item-actions">
-                  <button type="button" className="btn-ghost btn-sm" onClick={() => onEdit(sale)}>
-                    Edit
-                  </button>
-                  <button type="button" className="btn-danger btn-sm" onClick={() => void onDelete(sale.id)}>
-                    Delete
-                  </button>
-                </div>
+      <div className="agri-card card agri-section">
+        <div className="card-header">
+          <i className="bi bi-plus-circle me-1 text-success" />
+          {editingId ? 'Edit Sale' : 'Record a Sale'}
+        </div>
+        <div className="card-body">
+          <form onSubmit={onSubmit}>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className="form-label">Farm</label>
+                <select className="form-select" value={form.farm} onChange={set('farm')}>
+                  <option value={0}>Choose a farm…</option>
+                  {farms.map((farm) => (
+                    <option key={farm.id} value={farm.id}>{farm.name}</option>
+                  ))}
+                </select>
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+              <div className="col-md-6">
+                <label className="form-label">Crop (optional)</label>
+                <select className="form-select" value={form.crop ?? 0} onChange={set('crop')}>
+                  <option value={0}>No specific crop</option>
+                  {farmCrops.map((crop) => (
+                    <option key={crop.id} value={crop.id}>
+                      {crop.crop_type_display}{crop.variety ? ` — ${crop.variety}` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">Quantity</label>
+                <input type="number" step="0.01" min="0.01" className="form-control" value={form.quantity} onChange={set('quantity')} required placeholder="e.g. 500" />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">Unit</label>
+                <select className="form-select" value={form.unit} onChange={set('unit')}>
+                  {UNITS.map((u) => (
+                    <option key={u.value} value={u.value}>{u.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">Unit price (UGX)</label>
+                <input type="number" step="0.01" min="0.01" className="form-control" value={form.unit_price} onChange={set('unit_price')} required placeholder="e.g. 1400" />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">Sale date</label>
+                <input type="date" className="form-control" value={form.sale_date} onChange={set('sale_date')} required />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Buyer name (optional)</label>
+                <input className="form-control" value={form.buyer_name} onChange={set('buyer_name')} placeholder="e.g. Lira Market Agent" />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Buyer contact (optional)</label>
+                <input className="form-control" value={form.buyer_contact} onChange={set('buyer_contact')} placeholder="e.g. +256701234567" />
+              </div>
+              <div className="col-12">
+                <label className="form-label">Notes</label>
+                <textarea className="form-control" value={form.notes} onChange={set('notes')} rows={2} placeholder="Optional" />
+              </div>
+            </div>
+            <div className="d-flex gap-2 mt-3">
+              <button type="submit" className="btn-agri" disabled={busy}>
+                <i className="bi bi-check-lg me-1" />
+                {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add sale'}
+              </button>
+              {editingId && (
+                <button
+                  type="button"
+                  className="btn-agri-outline"
+                  onClick={() => {
+                    setEditingId(null)
+                    setForm(EMPTY_FORM)
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="agri-card card">
+        <div className="card-header">
+          <i className="bi bi-list-ul me-1 text-success" />All Sales ({sales.length})
+        </div>
+        <div className="card-body">
+          {sales.length === 0 ? (
+            <div className="agri-empty">
+              <i className="bi bi-tag" />
+              No sales yet. Record your first sale above.
+            </div>
+          ) : (
+            <div className="d-flex flex-column gap-2">
+              {sales.map((sale) => (
+                <div key={sale.id} className="agri-list-item">
+                  <div>
+                    <h5>
+                      <i className="bi bi-tag me-1 text-success" />
+                      UGX {Number(sale.total_amount).toLocaleString()}
+                    </h5>
+                    <p>
+                      {Number(sale.quantity).toLocaleString()} {sale.unit} × UGX {Number(sale.unit_price).toLocaleString()}
+                      {sale.crop_name ? ` · ${sale.crop_name}` : ''} · {sale.farm_name} · {sale.sale_date}
+                    </p>
+                    {sale.buyer_name && <p>Buyer: {sale.buyer_name}</p>}
+                  </div>
+                  <div className="list-actions">
+                    <button type="button" className="btn-agri-outline btn-sm" onClick={() => onEdit(sale)}>
+                      <i className="bi bi-pencil me-1" />Edit
+                    </button>
+                    <button type="button" className="btn-agri-danger btn-sm" onClick={() => void onDelete(sale.id)}>
+                      <i className="bi bi-trash me-1" />Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

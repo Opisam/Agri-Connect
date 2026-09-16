@@ -66,33 +66,34 @@ export function MarketPricesPage() {
 
   return (
     <div className="content">
-      <div>
-        <h1 className="page-title">Market Prices</h1>
-        <p className="page-subtitle">
-          Latest produce prices across major Ugandan markets.
-        </p>
+      <div className="agri-page-header">
+        <h1><i className="bi bi-graph-up me-2 text-success" />Market Prices</h1>
+        <p>Latest produce prices across major Ugandan markets.</p>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
+      <div className="agri-filter-bar">
         <form
-          className="form-grid"
+          className="row g-2"
           onSubmit={(e) => {
             e.preventDefault()
           }}
         >
-          <label className="form-field">
-            Product
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="e.g. maize"
-            />
-          </label>
-          <label className="form-field">
-            Market
+          <div className="col-md-8">
+            <div className="input-group">
+              <span className="input-group-text bg-white"><i className="bi bi-search text-muted" /></span>
+              <input
+                className="form-control"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="e.g. maize"
+              />
+            </div>
+          </div>
+          <div className="col-md-4">
             <select
+              className="form-select"
               value={marketFilter}
               onChange={(e) => setMarketFilter(e.target.value)}
             >
@@ -103,79 +104,89 @@ export function MarketPricesPage() {
                 </option>
               ))}
             </select>
-          </label>
+          </div>
         </form>
-      </section>
+      </div>
 
-      <section className="section">
+      <div>
         {filtered.length === 0 ? (
-          <div className="empty">No market prices match your search.</div>
+          <div className="agri-empty">
+            <i className="bi bi-graph-up" />
+            No market prices match your search.
+          </div>
         ) : (
-          <div className="list">
+          <div className="row g-4">
             {filtered.map((price) => (
-              <div key={price.id} className="list-item">
-                <div>
-                  <h3>
-                    {price.product}
-                    <span className="badge" style={{ marginLeft: '0.5rem' }}>
-                      {price.market_name}
-                    </span>
-                  </h3>
-                  <p>
-                    UGX {Number(price.price).toLocaleString()} / {price.unit}
-                    {' · '}
-                    {price.price_date}
-                    {price.source ? ` · source: ${price.source}` : ''}
-                  </p>
-                  <button
-                    type="button"
-                    className="btn-ghost btn-sm"
-                    disabled={historyBusy && historyFor === `${price.market}:${price.product}`}
-                    onClick={() => void onViewHistory(price.market, price.product)}
-                  >
-                    {historyFor === `${price.market}:${price.product}`
-                      ? historyBusy
-                        ? 'Loading…'
-                        : 'Hide history'
-                      : 'View history'}
-                  </button>
-                  {historyFor === `${price.market}:${price.product}` &&
-                    history.length > 0 && (
-                      <table className="history-table">
-                        <thead>
-                          <tr>
-                            <th>Date</th>
-                            <th>Price</th>
-                            <th>Unit</th>
-                            <th>Source</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {history.map((row) => (
-                            <tr key={row.id}>
-                              <td>{row.price_date}</td>
-                              <td>UGX {Number(row.price).toLocaleString()}</td>
-                              <td>{row.unit}</td>
-                              <td>{row.source || '—'}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
-                  {historyFor === `${price.market}:${price.product}` &&
-                    history.length === 0 &&
-                    !historyBusy && (
-                      <p className="text-muted">
-                        No recorded history for {price.product} at{' '}
-                        {marketOptions.get(price.market)?.name ?? price.market_name}.
-                      </p>
-                    )}
+              <div key={price.id} className="col-md-6 col-lg-4">
+                <div className="agri-card card h-100">
+                  <div className="card-body d-flex flex-column">
+                    <div className="d-flex justify-content-between align-items-start">
+                      <h5 className="fw-bold mb-1">
+                        <i className="bi bi-cash-coin me-1 text-success" />
+                        {price.product}
+                      </h5>
+                      <span className="badge badge-agri">{price.market_name}</span>
+                    </div>
+                    <p className="mb-2" style={{ color: '#1b5e20', fontWeight: 700, fontSize: '1.2rem' }}>
+                      UGX {Number(price.price).toLocaleString()}<span className="text-muted fs-6 fw-normal"> / {price.unit}</span>
+                    </p>
+                    <p className="text-muted small mb-0">
+                      <i className="bi bi-calendar3 me-1" />{price.price_date}
+                      {price.source ? ` · source: ${price.source}` : ''}
+                    </p>
+                    <div className="mt-auto pt-3">
+                      <button
+                        type="button"
+                        className="btn-agri-outline btn-sm w-100"
+                        disabled={historyBusy && historyFor === `${price.market}:${price.product}`}
+                        onClick={() => void onViewHistory(price.market, price.product)}
+                      >
+                        <i className="bi bi-clock-history me-1" />
+                        {historyFor === `${price.market}:${price.product}`
+                          ? historyBusy
+                            ? 'Loading…'
+                            : 'Hide history'
+                          : 'View history'}
+                      </button>
+                      {historyFor === `${price.market}:${price.product}` &&
+                        history.length > 0 && (
+                          <div className="table-responsive mt-3">
+                            <table className="table agri-table table-sm mb-0">
+                              <thead>
+                                <tr>
+                                  <th>Date</th>
+                                  <th>Price</th>
+                                  <th>Unit</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {history.map((row) => (
+                                  <tr key={row.id}>
+                                    <td>{row.price_date}</td>
+                                    <td className="fw-semibold">UGX {Number(row.price).toLocaleString()}</td>
+                                    <td>{row.unit}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      {historyFor === `${price.market}:${price.product}` &&
+                        history.length === 0 &&
+                        !historyBusy && (
+                          <p className="text-muted small mt-3 mb-0">
+                            No recorded history for {price.product} at{' '}
+                            {marketOptions.get(price.market)?.name ?? price.market_name}.
+                          </p>
+                        )}
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </section>
+      </div>
     </div>
   )
 }

@@ -31,9 +31,10 @@ export function NotificationBell() {
   }, [])
 
   return (
-    <span className="notification-bell">
-      <Link to="/notifications">
-        Notifications{count ? ` (${count})` : ''}
+    <span className="agri-notification-bell d-inline-flex align-items-center">
+      <Link to="/notifications" className="nav-link position-relative px-2" aria-label="Notifications">
+        <i className="bi bi-bell fs-5" />
+        {count ? <span className="notification-count">{count > 9 ? '9+' : count}</span> : null}
       </Link>
     </span>
   )

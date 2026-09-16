@@ -135,7 +135,11 @@ export function MyListingsPage() {
   if (user?.role !== 'FARMER') {
     return (
       <div className="content">
-        <p>Only farmers can manage listings. <Link to="/marketplace">Browse marketplace</Link></p>
+        <div className="agri-empty">
+          <i className="bi bi-shield-lock" />
+          Only farmers can manage listings.{' '}
+          <Link to="/marketplace">Browse marketplace</Link>
+        </div>
       </div>
     )
   }
@@ -144,131 +148,148 @@ export function MyListingsPage() {
 
   return (
     <div className="content">
-      <div>
-        <h1 className="page-title">My Listings</h1>
-        <p className="page-subtitle">Manage your produce listings on the marketplace.</p>
+      <div className="agri-page-header">
+        <h1><i className="bi bi-megaphone me-2 text-success" />My Listings</h1>
+        <p>Manage your produce listings on the marketplace.</p>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
-        <h2>{editingId ? 'Edit Listing' : 'New Listing'}</h2>
-        <form onSubmit={onSubmit} className="form-grid">
-          <label className="form-field">
-            Product name
-            <input value={form.product_name} onChange={set('product_name')} required placeholder="e.g. Fresh tomatoes" />
-          </label>
-          <label className="form-field">
-            Category
-            <select value={form.category} onChange={set('category')} required>
-              <option value={0}>Choose a category…</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Quantity
-            <input type="number" step="0.01" min="0.01" value={form.quantity} onChange={set('quantity')} required />
-          </label>
-          <label className="form-field">
-            Unit
-            <select value={form.unit} onChange={set('unit')}>
-              {UNITS.map((u) => (
-                <option key={u} value={u}>{u}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Price per unit (UGX)
-            <input type="number" step="0.01" min="0.01" value={form.price_per_unit} onChange={set('price_per_unit')} required />
-          </label>
-          <label className="form-field">
-            Location
-            <input value={form.location} onChange={set('location')} required placeholder="e.g. Lugazi" />
-          </label>
-          <label className="form-field">
-            District
-            <input value={form.district} onChange={set('district')} required placeholder="e.g. Mukono" />
-          </label>
-          <label className="form-field">
-            Available from
-            <input type="date" value={form.available_from} onChange={set('available_from')} required />
-          </label>
-          <label className="form-field full">
-            Description
-            <textarea value={form.description} onChange={set('description')} rows={2} placeholder="Optional" />
-          </label>
-          <div className="form-actions">
-            <button type="submit" className="btn-primary" disabled={busy}>
-              {busy ? 'Saving…' : editingId ? 'Save changes' : 'Create listing'}
-            </button>
-            {editingId && (
-              <button
-                type="button"
-                className="btn-ghost"
-                onClick={() => {
-                  setEditingId(null)
-                  setForm(EMPTY_FORM)
-                }}
-              >
-                Cancel
-              </button>
-            )}
-          </div>
-        </form>
-      </section>
-
-      <section className="section">
-        <h2>All My Listings</h2>
-        {farmerListings.length === 0 ? (
-          <div className="empty">No listings yet. Create your first listing above.</div>
-        ) : (
-          <div className="list">
-            {farmerListings.map((listing) => (
-              <div key={listing.id} className="list-item">
-                <div>
-                  <h3>
-                    {listing.product_name}
-                    <span className={`badge badge-${listing.status.toLowerCase()}`} style={{ marginLeft: '0.5rem' }}>
-                      {listing.status_display}
-                    </span>
-                  </h3>
-                  <p>
-                    UGX {Number(listing.price_per_unit).toLocaleString()} / {listing.unit}
-                    {' · '}
-                    {listing.quantity_remaining} / {listing.quantity} {listing.unit} available
-                    {' · '}
-                    {listing.location}, {listing.district}
-                  </p>
-                </div>
-                <div className="item-actions">
-                  {listing.status !== 'CANCELLED' && (
-                    <button type="button" className="btn-ghost btn-sm" onClick={() => onEdit(listing)}>
-                      Edit
-                    </button>
-                  )}
-                  {listing.status === 'ACTIVE' && (
-                    <button type="button" className="btn-danger btn-sm" onClick={() => void onCancelListing(listing.id)}>
-                      Cancel
-                    </button>
-                  )}
-                  {(listing.status === 'CANCELLED' || listing.status === 'EXPIRED') && (
-                    <button type="button" className="btn-primary btn-sm" onClick={() => void onResumeListing(listing.id)}>
-                      Reactivate
-                    </button>
-                  )}
-                  {(listing.status === 'DRAFT' || listing.status === 'CANCELLED') && (
-                    <button type="button" className="btn-danger btn-sm" onClick={() => void onDelete(listing.id)}>
-                      Delete
-                    </button>
-                  )}
-                </div>
+      <div className="agri-card card agri-section">
+        <div className="card-header">
+          <i className="bi bi-plus-circle me-1 text-success" />
+          {editingId ? 'Edit Listing' : 'New Listing'}
+        </div>
+        <div className="card-body">
+          <form onSubmit={onSubmit}>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="listing-product">Product name</label>
+                <input id="listing-product" className="form-control" value={form.product_name} onChange={set('product_name')} required placeholder="e.g. Fresh tomatoes" />
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="listing-category">Category</label>
+                <select id="listing-category" className="form-select" value={form.category} onChange={set('category')} required>
+                  <option value={0}>Choose a category…</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-3">
+                <label className="form-label" htmlFor="listing-qty">Quantity</label>
+                <input id="listing-qty" type="number" step="0.01" min="0.01" className="form-control" value={form.quantity} onChange={set('quantity')} required />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label" htmlFor="listing-unit">Unit</label>
+                <select id="listing-unit" className="form-select" value={form.unit} onChange={set('unit')}>
+                  {UNITS.map((u) => (
+                    <option key={u} value={u}>{u}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-3">
+                <label className="form-label" htmlFor="listing-price">Price per unit (UGX)</label>
+                <input id="listing-price" type="number" step="0.01" min="0.01" className="form-control" value={form.price_per_unit} onChange={set('price_per_unit')} required />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label" htmlFor="listing-from">Available from</label>
+                <input id="listing-from" type="date" className="form-control" value={form.available_from} onChange={set('available_from')} required />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="listing-location">Location</label>
+                <input id="listing-location" className="form-control" value={form.location} onChange={set('location')} required placeholder="e.g. Lugazi" />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label" htmlFor="listing-district">District</label>
+                <input id="listing-district" className="form-control" value={form.district} onChange={set('district')} required placeholder="e.g. Mukono" />
+              </div>
+              <div className="col-12">
+                <label className="form-label" htmlFor="listing-desc">Description</label>
+                <textarea id="listing-desc" className="form-control" value={form.description} onChange={set('description')} rows={2} placeholder="Optional" />
+              </div>
+            </div>
+            <div className="d-flex gap-2 mt-3">
+              <button type="submit" className="btn-agri" disabled={busy}>
+                <i className="bi bi-check-lg me-1" />
+                {busy ? 'Saving…' : editingId ? 'Save changes' : 'Create listing'}
+              </button>
+              {editingId && (
+                <button
+                  type="button"
+                  className="btn-agri-outline"
+                  onClick={() => {
+                    setEditingId(null)
+                    setForm(EMPTY_FORM)
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="agri-card card">
+        <div className="card-header">
+          <i className="bi bi-list-ul me-1 text-success" />All My Listings ({farmerListings.length})
+        </div>
+        <div className="card-body">
+          {farmerListings.length === 0 ? (
+            <div className="agri-empty">
+              <i className="bi bi-megaphone" />
+              No listings yet. Create your first listing above.
+            </div>
+          ) : (
+            <div className="d-flex flex-column gap-2">
+              {farmerListings.map((listing) => (
+                <div key={listing.id} className="agri-list-item">
+                  <div>
+                    <h5>
+                      <i className="bi bi-box-seam me-1 text-success" />
+                      {listing.product_name}
+                      <span className={`badge badge-${listing.status.toLowerCase()} ms-2`}>
+                        {listing.status_display}
+                      </span>
+                    </h5>
+                    <p>
+                      <strong className="text-success">UGX {Number(listing.price_per_unit).toLocaleString()}</strong> / {listing.unit}
+                      {' · '}
+                      {listing.quantity_remaining} / {listing.quantity} {listing.unit} available
+                      {' · '}
+                      <i className="bi bi-geo-alt me-1" />
+                      {listing.location}, {listing.district}
+                    </p>
+                  </div>
+                  <div className="list-actions">
+                    {listing.status !== 'CANCELLED' && (
+                      <button type="button" className="btn-agri-outline btn-sm" onClick={() => onEdit(listing)}>
+                        <i className="bi bi-pencil me-1" />Edit
+                      </button>
+                    )}
+                    {listing.status === 'ACTIVE' && (
+                      <button type="button" className="btn-agri-danger btn-sm" onClick={() => void onCancelListing(listing.id)}>
+                        <i className="bi bi-x-circle me-1" />Cancel
+                      </button>
+                    )}
+                    {(listing.status === 'CANCELLED' || listing.status === 'EXPIRED') && (
+                      <button type="button" className="btn-agri btn-sm" onClick={() => void onResumeListing(listing.id)}>
+                        <i className="bi bi-arrow-repeat me-1" />Reactivate
+                      </button>
+                    )}
+                    {(listing.status === 'DRAFT' || listing.status === 'CANCELLED') && (
+                      <button type="button" className="btn-agri-danger btn-sm" onClick={() => void onDelete(listing.id)}>
+                        <i className="bi bi-trash me-1" />Delete
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

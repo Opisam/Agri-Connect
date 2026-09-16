@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { getApiErrorMessage } from '../api/client'
 import { cropsApi, farmsApi } from '../farms/api'
@@ -66,88 +67,115 @@ export function ProfitLossPage() {
 
   return (
     <div className="content">
-      <div>
-        <h1 className="page-title">Farm Finances</h1>
-        <p className="page-subtitle">Understand your expenses, revenue and profit.</p>
+      <div className="agri-page-header">
+        <h1><i className="bi bi-bar-chart-line me-2 text-success" />Farm Finances</h1>
+        <p>Understand your expenses, revenue and profit.</p>
       </div>
 
-      <div className="section" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-        <a href="/finance" className="btn-ghost btn-sm">Dashboard</a>
-        <a href="/finance/expenses" className="btn-ghost btn-sm">Expenses</a>
-        <a href="/finance/harvests" className="btn-ghost btn-sm">Harvests</a>
-        <a href="/finance/sales" className="btn-ghost btn-sm">Sales</a>
+      <div className="agri-quick-nav">
+        <Link to="/finance" className="btn btn-agri">
+          <i className="bi bi-graph-up me-1" />Dashboard
+        </Link>
+        <Link to="/finance/expenses" className="btn btn-agri-outline">
+          <i className="bi bi-receipt me-1" />Expenses
+        </Link>
+        <Link to="/finance/harvests" className="btn btn-agri-outline">
+          <i className="bi bi-box-seam me-1" />Harvests
+        </Link>
+        <Link to="/finance/sales" className="btn btn-agri-outline">
+          <i className="bi bi-tag me-1" />Sales
+        </Link>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
-        <form onSubmit={onSubmit} className="form-grid">
-          <label className="form-field">
-            Farm
-            <select value={filters.farm_id} onChange={set('farm_id')}>
-              <option value="">All farms</option>
-              {farms.map((farm) => (
-                <option key={farm.id} value={farm.id}>{farm.name}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Crop
-            <select value={filters.crop_id} onChange={set('crop_id')}>
-              <option value="">All crops</option>
-              {farmCrops.map((crop) => (
-                <option key={crop.id} value={crop.id}>{crop.crop_type_display}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            From
-            <input type="date" value={filters.start_date} onChange={set('start_date')} />
-          </label>
-          <label className="form-field">
-            To
-            <input type="date" value={filters.end_date} onChange={set('end_date')} />
-          </label>
-          <div className="form-actions">
-            <button type="submit" className="btn-primary" disabled={busy}>
-              {busy ? 'Calculating…' : 'Calculate'}
-            </button>
-            <button
-              type="button"
-              className="btn-ghost"
-              onClick={() => {
-                setFilters(EMPTY_FILTERS)
-                void loadSummary(EMPTY_FILTERS)
-              }}
-            >
-              Reset
-            </button>
-          </div>
-        </form>
-      </section>
+      <div className="agri-card card agri-section">
+        <div className="card-header">
+          <i className="bi bi-funnel me-1 text-success" />Filter Results
+        </div>
+        <div className="card-body">
+          <form onSubmit={onSubmit}>
+            <div className="row g-3">
+              <div className="col-md-3">
+                <label className="form-label">Farm</label>
+                <select className="form-select" value={filters.farm_id} onChange={set('farm_id')}>
+                  <option value="">All farms</option>
+                  {farms.map((farm) => (
+                    <option key={farm.id} value={farm.id}>{farm.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">Crop</label>
+                <select className="form-select" value={filters.crop_id} onChange={set('crop_id')}>
+                  <option value="">All crops</option>
+                  {farmCrops.map((crop) => (
+                    <option key={crop.id} value={crop.id}>{crop.crop_type_display}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-2">
+                <label className="form-label">From</label>
+                <input type="date" className="form-control" value={filters.start_date} onChange={set('start_date')} />
+              </div>
+              <div className="col-md-2">
+                <label className="form-label">To</label>
+                <input type="date" className="form-control" value={filters.end_date} onChange={set('end_date')} />
+              </div>
+              <div className="col-md-2 d-flex align-items-end gap-2">
+                <button type="submit" className="btn-agri w-100" disabled={busy}>
+                  <i className="bi bi-search me-1" />
+                  {busy ? 'Calculating…' : 'Calculate'}
+                </button>
+                <button
+                  type="button"
+                  className="btn-agri-outline"
+                  onClick={() => {
+                    setFilters(EMPTY_FILTERS)
+                    void loadSummary(EMPTY_FILTERS)
+                  }}
+                >
+                  <i className="bi bi-arrow-counterclockwise" />
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
 
       {summary && (
-        <section className="stat-grid">
-          <div className="stat-card">
-            <span className="stat-label">Total Expenses</span>
-            <span className="stat-value stat-expense">UGX {totalExpenses.toLocaleString()}</span>
-            <span className="stat-meta">{summary.expense_count} expense record{summary.expense_count === 1 ? '' : 's'}</span>
+        <div className="row g-4">
+          <div className="col-md-4">
+            <div className="agri-stat-card">
+              <div className="stat-icon red mb-2"><i className="bi bi-receipt" /></div>
+              <div className="stat-label">Total Expenses</div>
+              <div className="stat-value">UGX {totalExpenses.toLocaleString()}</div>
+              <div className="stat-meta">{summary.expense_count} expense record{summary.expense_count === 1 ? '' : 's'}</div>
+            </div>
           </div>
-          <div className="stat-card">
-            <span className="stat-label">Total Revenue</span>
-            <span className="stat-value">UGX {totalRevenue.toLocaleString()}</span>
-            <span className="stat-meta">{summary.sale_count} sale record{summary.sale_count === 1 ? '' : 's'}</span>
+          <div className="col-md-4">
+            <div className="agri-stat-card">
+              <div className="stat-icon green mb-2"><i className="bi bi-cash-coin" /></div>
+              <div className="stat-label">Total Revenue</div>
+              <div className="stat-value">UGX {totalRevenue.toLocaleString()}</div>
+              <div className="stat-meta">{summary.sale_count} sale record{summary.sale_count === 1 ? '' : 's'}</div>
+            </div>
           </div>
-          <div className="stat-card">
-            <span className="stat-label">{profitLoss >= 0 ? 'Profit' : 'Loss'}</span>
-            <span className={`stat-value ${profitLoss >= 0 ? 'stat-profit' : 'stat-expense'}`}>
-              UGX {Math.abs(profitLoss).toLocaleString()}
-            </span>
-            <span className="stat-meta">
-              {profitLoss >= 0 ? 'Revenue minus expenses' : 'Expenses exceed revenue'}
-            </span>
+          <div className="col-md-4">
+            <div className={`agri-stat-card ${profitLoss >= 0 ? '' : 'border border-danger'}`}>
+              <div className={`stat-icon ${profitLoss >= 0 ? 'orange' : 'red'} mb-2`}>
+                <i className={`bi ${profitLoss >= 0 ? 'bi-graph-up-arrow' : 'bi-graph-down-arrow'}`} />
+              </div>
+              <div className="stat-label">{profitLoss >= 0 ? 'Profit' : 'Loss'}</div>
+              <div className={`stat-value ${profitLoss >= 0 ? '' : 'text-danger'}`}>
+                UGX {Math.abs(profitLoss).toLocaleString()}
+              </div>
+              <div className="stat-meta">
+                {profitLoss >= 0 ? 'Revenue minus expenses' : 'Expenses exceed revenue'}
+              </div>
+            </div>
           </div>
-        </section>
+        </div>
       )}
     </div>
   )

@@ -42,7 +42,10 @@ export function OrdersPage() {
   if (!user) {
     return (
       <div className="content">
-        <p>Please log in to view your orders. <Link to="/login">Login</Link></p>
+        <div className="agri-empty">
+          <i className="bi bi-box-arrow-in-right" />
+          Please log in to view your orders. <Link to="/login">Login</Link>
+        </div>
       </div>
     )
   }
@@ -51,82 +54,87 @@ export function OrdersPage() {
 
   return (
     <div className="content">
-      <div>
-        <h1 className="page-title">{isFarmer ? 'Orders Received' : 'My Orders'}</h1>
-        <p className="page-subtitle">
+      <div className="agri-page-header">
+        <h1>
+          <i className={`bi ${isFarmer ? 'bi-inbox' : 'bi-cart-check'} me-2 text-success`} />
+          {isFarmer ? 'Orders Received' : 'My Orders'}
+        </h1>
+        <p>
           {isFarmer ? 'Manage orders placed on your listings.' : 'Track your orders and their status.'}
         </p>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
+      <div>
         {orders.length === 0 ? (
-          <div className="empty">
+          <div className="agri-empty">
+            <i className="bi bi-cart" />
             {isFarmer ? 'No orders received yet.' : (
               <>No orders yet. Browse the <Link to="/marketplace">marketplace</Link> to place an order.</>
             )}
           </div>
         ) : (
-          <div className="list">
+          <div className="d-flex flex-column gap-2">
             {orders.map((order) => (
-              <div key={order.id} className="list-item">
+              <div key={order.id} className="agri-list-item">
                 <div>
-                  <h3>
+                  <h5>
+                    <i className="bi bi-box-seam me-1 text-success" />
                     {order.listing_product_name}
-                    <span className={`badge badge-${order.status.toLowerCase()}`} style={{ marginLeft: '0.5rem' }}>
+                    <span className={`badge badge-${order.status.toLowerCase()} ms-2`}>
                       {order.status_display}
                     </span>
-                  </h3>
+                  </h5>
                   <p>
-                    {isFarmer ? `Buyer: ${order.buyer_name}` : `Seller: ${order.listing_product_name}`}
+                    {isFarmer ? <><i className="bi bi-person me-1" />Buyer: {order.buyer_name}</> : <><i className="bi bi-person me-1" />Seller: {order.listing_product_name}</>}
                     {' · '}
-                    {order.quantity} {order.listing_unit}
+                    <i className="bi bi-box me-1" />{order.quantity} {order.listing_unit}
                     {' · '}
-                    UGX {Number(order.total_price).toLocaleString()}
+                    <strong className="text-success">UGX {Number(order.total_price).toLocaleString()}</strong>
                   </p>
-                  {order.notes && <p className="text-muted">Buyer note: {order.notes}</p>}
-                  {order.farmer_notes && <p className="text-muted">Farmer note: {order.farmer_notes}</p>}
+                  {order.notes && <p className="mb-0">Buyer note: {order.notes}</p>}
+                  {order.farmer_notes && <p className="mb-0">Farmer note: {order.farmer_notes}</p>}
                 </div>
-                <div className="item-actions">
+                <div className="list-actions">
                   {isFarmer && order.status === 'PENDING' && (
                     <>
                       <button
                         type="button"
-                        className="btn-primary btn-sm"
+                        className="btn-agri btn-sm"
                         disabled={busy}
                         onClick={() => void onAction(order.id, { status: 'ACCEPTED' })}
                       >
-                        Accept
+                        <i className="bi bi-check-lg me-1" />Accept
                       </button>
                       <button
                         type="button"
-                        className="btn-danger btn-sm"
+                        className="btn-agri-danger btn-sm"
                         disabled={busy}
                         onClick={() => void onAction(order.id, { status: 'REJECTED' })}
                       >
-                        Reject
+                        <i className="bi bi-x-lg me-1" />Reject
                       </button>
                     </>
                   )}
                   {isFarmer && order.status === 'ACCEPTED' && (
                     <button
                       type="button"
-                      className="btn-primary btn-sm"
+                      className="btn-agri btn-sm"
                       disabled={busy}
                       onClick={() => void onAction(order.id, { status: 'COMPLETED' })}
                     >
-                      Mark complete
+                      <i className="bi bi-check2-square me-1" />Mark complete
                     </button>
                   )}
                   {!isFarmer && (order.status === 'PENDING' || order.status === 'ACCEPTED') && (
                     <button
                       type="button"
-                      className="btn-danger btn-sm"
+                      className="btn-agri-danger btn-sm"
                       disabled={busy}
                       onClick={() => void onAction(order.id, { status: 'CANCELLED' })}
                     >
-                      Cancel order
+                      <i className="bi bi-x-circle me-1" />Cancel order
                     </button>
                   )}
                 </div>
@@ -134,7 +142,7 @@ export function OrdersPage() {
             ))}
           </div>
         )}
-      </section>
+      </div>
     </div>
   )
 }

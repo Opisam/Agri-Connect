@@ -105,110 +105,137 @@ export function CropsPage() {
 
   return (
     <div className="content">
-      <div>
-        <h1 className="page-title">My Crops</h1>
-        <p className="page-subtitle">Track what is growing on your fields.</p>
+      <div className="agri-page-header">
+        <h1><i className="bi bi-flower1 me-2 text-success" />My Crops</h1>
+        <p>Track what is growing on your fields.</p>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
-        <h2>{editingId ? 'Edit Crop' : 'Record a Crop'}</h2>
-        <form onSubmit={onSubmit} className="form-grid">
-          <label className="form-field full">
-            Field
-            <select value={form.field_id} onChange={set('field_id')}>
-              <option value={0}>Choose a field…</option>
-              {options.map((o) => (
-                <option key={o.fieldId} value={o.fieldId}>{o.label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Crop type
-            <select value={form.crop_type} onChange={set('crop_type')}>
-              {CROP_TYPES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Variety
-            <input value={form.variety} onChange={set('variety')} placeholder="e.g. Longe 5" />
-          </label>
-          <label className="form-field">
-            Planting date
-            <input type="date" value={form.planting_date ?? ''} onChange={set('planting_date')} />
-          </label>
-          <label className="form-field">
-            Expected harvest date
-            <input type="date" value={form.expected_harvest_date ?? ''} onChange={set('expected_harvest_date')} />
-          </label>
-          <label className="form-field">
-            Status
-            <select value={form.status} onChange={set('status')}>
-              {CROP_STATUSES.map((s) => (
-                <option key={s.value} value={s.value}>{s.label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field full">
-            Notes
-            <textarea value={form.notes} onChange={set('notes')} rows={2} placeholder="Optional" />
-          </label>
-          <div className="form-actions">
-            <button type="submit" className="btn-primary" disabled={busy}>
-              {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add crop'}
-            </button>
-            {editingId && (
-              <button
-                type="button"
-                className="btn-ghost"
-                onClick={() => {
-                  setEditingId(null)
-                  setForm(EMPTY_FORM)
-                }}
-              >
-                Cancel
-              </button>
-            )}
-          </div>
-        </form>
-      </section>
-
-      <section className="section">
-        <h2>All Crops</h2>
-        {crops.length === 0 ? (
-          <div className="empty">No crops yet. Record your first crop above.</div>
-        ) : (
-          <div className="list">
-            {crops.map((crop) => (
-              <div key={crop.id} className="list-item">
-                <div>
-                  <h3>{crop.crop_type_display}{crop.variety ? ` — ${crop.variety}` : ''}</h3>
-                  <p>
-                    {crop.field_name} · {crop.farm_name} · <span className="badge">{crop.status_display}</span>
-                  </p>
-                  {crop.planting_date && (
-                    <p className="text-muted">Planted {crop.planting_date}</p>
-                  )}
-                </div>
-                <div className="item-actions">
-                  <Link to={`/crops/${crop.id}/activities`} className="btn-ghost btn-sm">
-                    Activities
-                  </Link>
-                  <button type="button" className="btn-ghost btn-sm" onClick={() => onEdit(crop)}>
-                    Edit
-                  </button>
-                  <button type="button" className="btn-danger btn-sm" onClick={() => void onDelete(crop.id)}>
-                    Delete
-                  </button>
-                </div>
+      <div className="agri-card card agri-section">
+        <div className="card-header">
+          <i className="bi bi-plus-circle me-1 text-success" />
+          {editingId ? 'Edit Crop' : 'Record a Crop'}
+        </div>
+        <div className="card-body">
+          <form onSubmit={onSubmit}>
+            <div className="row g-3">
+              <div className="col-md-12">
+                <label className="form-label">Field</label>
+                <select className="form-select" value={form.field_id} onChange={set('field_id')}>
+                  <option value={0}>Choose a field…</option>
+                  {options.map((o) => (
+                    <option key={o.fieldId} value={o.fieldId}>{o.label}</option>
+                  ))}
+                </select>
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+              <div className="col-md-6">
+                <label className="form-label">Crop type</label>
+                <select className="form-select" value={form.crop_type} onChange={set('crop_type')}>
+                  {CROP_TYPES.map((t) => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Variety</label>
+                <input
+                  className="form-control"
+                  value={form.variety}
+                  onChange={set('variety')}
+                  placeholder="e.g. Longe 5"
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Planting date</label>
+                <input type="date" className="form-control" value={form.planting_date ?? ''} onChange={set('planting_date')} />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Expected harvest date</label>
+                <input type="date" className="form-control" value={form.expected_harvest_date ?? ''} onChange={set('expected_harvest_date')} />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Status</label>
+                <select className="form-select" value={form.status} onChange={set('status')}>
+                  {CROP_STATUSES.map((s) => (
+                    <option key={s.value} value={s.value}>{s.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Notes</label>
+                <input
+                  className="form-control"
+                  value={form.notes}
+                  onChange={set('notes')}
+                  placeholder="Optional"
+                />
+              </div>
+            </div>
+            <div className="d-flex gap-2 mt-3">
+              <button type="submit" className="btn-agri" disabled={busy}>
+                <i className="bi bi-check-lg me-1" />
+                {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add crop'}
+              </button>
+              {editingId && (
+                <button
+                  type="button"
+                  className="btn-agri-outline"
+                  onClick={() => {
+                    setEditingId(null)
+                    setForm(EMPTY_FORM)
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="agri-card card">
+        <div className="card-header">
+          <i className="bi bi-list-ul me-1 text-success" />All Crops ({crops.length})
+        </div>
+        <div className="card-body">
+          {crops.length === 0 ? (
+            <div className="agri-empty">
+              <i className="bi bi-flower1" />
+              No crops yet. Record your first crop above.
+            </div>
+          ) : (
+            <div className="d-flex flex-column gap-2">
+              {crops.map((crop) => (
+                <div key={crop.id} className="agri-list-item">
+                  <div>
+                    <h5>
+                      <i className="bi bi-flower1 me-1 text-success" />
+                      {crop.crop_type_display}{crop.variety ? ` — ${crop.variety}` : ''}
+                      <span className={`badge badge-${crop.status.toLowerCase()} ms-2`}>{crop.status_display}</span>
+                    </h5>
+                    <p>
+                      {crop.field_name} · {crop.farm_name}
+                      {crop.planting_date ? ` · Planted ${crop.planting_date}` : ''}
+                    </p>
+                  </div>
+                  <div className="list-actions">
+                    <Link to={`/crops/${crop.id}/activities`} className="btn-agri-outline btn-sm">
+                      <i className="bi bi-clipboard-check me-1" />Activities
+                    </Link>
+                    <button type="button" className="btn-agri-outline btn-sm" onClick={() => onEdit(crop)}>
+                      <i className="bi bi-pencil me-1" />Edit
+                    </button>
+                    <button type="button" className="btn-agri-danger btn-sm" onClick={() => void onDelete(crop.id)}>
+                      <i className="bi bi-trash me-1" />Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

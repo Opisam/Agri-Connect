@@ -117,111 +117,121 @@ export function HarvestsPage() {
 
   return (
     <div className="content">
-      <div>
-        <h1 className="page-title">Harvests</h1>
-        <p className="page-subtitle">Record the yield from your crops.</p>
+      <div className="agri-page-header">
+        <h1><i className="bi bi-box-seam me-2 text-success" />Harvests</h1>
+        <p>Record the yield from your crops.</p>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
-        <h2>{editingId ? 'Edit Harvest' : 'Record a Harvest'}</h2>
-        <form onSubmit={onSubmit} className="form-grid">
-          <label className="form-field">
-            Farm
-            <select value={form.farm} onChange={set('farm')}>
-              <option value={0}>Choose a farm…</option>
-              {farms.map((farm) => (
-                <option key={farm.id} value={farm.id}>{farm.name}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Crop
-            <select value={form.crop} onChange={set('crop')}>
-              <option value={0}>Choose a crop…</option>
-              {farmCrops.map((crop) => (
-                <option key={crop.id} value={crop.id}>
-                  {crop.crop_type_display}{crop.variety ? ` — ${crop.variety}` : ''}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Quantity
-            <input
-              type="number"
-              step="0.01"
-              min="0.01"
-              value={form.quantity}
-              onChange={set('quantity')}
-              required
-              placeholder="e.g. 2500"
-            />
-          </label>
-          <label className="form-field">
-            Unit
-            <select value={form.unit} onChange={set('unit')}>
-              {UNITS.map((u) => (
-                <option key={u.value} value={u.value}>{u.label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Harvest date
-            <input type="date" value={form.harvest_date} onChange={set('harvest_date')} required />
-          </label>
-          <label className="form-field full">
-            Notes
-            <textarea value={form.notes} onChange={set('notes')} rows={2} placeholder="Optional" />
-          </label>
-          <div className="form-actions">
-            <button type="submit" className="btn-primary" disabled={busy}>
-              {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add harvest'}
-            </button>
-            {editingId && (
-              <button
-                type="button"
-                className="btn-ghost"
-                onClick={() => {
-                  setEditingId(null)
-                  setForm(EMPTY_FORM)
-                }}
-              >
-                Cancel
-              </button>
-            )}
-          </div>
-        </form>
-      </section>
-
-      <section className="section">
-        <h2>All Harvests</h2>
-        {harvests.length === 0 ? (
-          <div className="empty">No harvests yet. Record your first harvest above.</div>
-        ) : (
-          <div className="list">
-            {harvests.map((harvest) => (
-              <div key={harvest.id} className="list-item">
-                <div>
-                  <h3>{Number(harvest.quantity).toLocaleString()} {harvest.unit}</h3>
-                  <p>
-                    {harvest.crop_name} · {harvest.farm_name} · {harvest.harvest_date}
-                  </p>
-                </div>
-                <div className="item-actions">
-                  <button type="button" className="btn-ghost btn-sm" onClick={() => onEdit(harvest)}>
-                    Edit
-                  </button>
-                  <button type="button" className="btn-danger btn-sm" onClick={() => void onDelete(harvest.id)}>
-                    Delete
-                  </button>
-                </div>
+      <div className="agri-card card agri-section">
+        <div className="card-header">
+          <i className="bi bi-plus-circle me-1 text-success" />
+          {editingId ? 'Edit Harvest' : 'Record a Harvest'}
+        </div>
+        <div className="card-body">
+          <form onSubmit={onSubmit}>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className="form-label">Farm</label>
+                <select className="form-select" value={form.farm} onChange={set('farm')}>
+                  <option value={0}>Choose a farm…</option>
+                  {farms.map((farm) => (
+                    <option key={farm.id} value={farm.id}>{farm.name}</option>
+                  ))}
+                </select>
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+              <div className="col-md-6">
+                <label className="form-label">Crop</label>
+                <select className="form-select" value={form.crop} onChange={set('crop')}>
+                  <option value={0}>Choose a crop…</option>
+                  {farmCrops.map((crop) => (
+                    <option key={crop.id} value={crop.id}>
+                      {crop.crop_type_display}{crop.variety ? ` — ${crop.variety}` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Quantity</label>
+                <input type="number" step="0.01" min="0.01" className="form-control" value={form.quantity} onChange={set('quantity')} required placeholder="e.g. 2500" />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Unit</label>
+                <select className="form-select" value={form.unit} onChange={set('unit')}>
+                  {UNITS.map((u) => (
+                    <option key={u.value} value={u.value}>{u.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Harvest date</label>
+                <input type="date" className="form-control" value={form.harvest_date} onChange={set('harvest_date')} required />
+              </div>
+              <div className="col-12">
+                <label className="form-label">Notes</label>
+                <textarea className="form-control" value={form.notes} onChange={set('notes')} rows={2} placeholder="Optional" />
+              </div>
+            </div>
+            <div className="d-flex gap-2 mt-3">
+              <button type="submit" className="btn-agri" disabled={busy}>
+                <i className="bi bi-check-lg me-1" />
+                {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add harvest'}
+              </button>
+              {editingId && (
+                <button
+                  type="button"
+                  className="btn-agri-outline"
+                  onClick={() => {
+                    setEditingId(null)
+                    setForm(EMPTY_FORM)
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="agri-card card">
+        <div className="card-header">
+          <i className="bi bi-list-ul me-1 text-success" />All Harvests ({harvests.length})
+        </div>
+        <div className="card-body">
+          {harvests.length === 0 ? (
+            <div className="agri-empty">
+              <i className="bi bi-box-seam" />
+              No harvests yet. Record your first harvest above.
+            </div>
+          ) : (
+            <div className="d-flex flex-column gap-2">
+              {harvests.map((harvest) => (
+                <div key={harvest.id} className="agri-list-item">
+                  <div>
+                    <h5>
+                      <i className="bi bi-box-seam me-1 text-success" />
+                      {Number(harvest.quantity).toLocaleString()} {harvest.unit}
+                    </h5>
+                    <p>
+                      {harvest.crop_name} · {harvest.farm_name} · {harvest.harvest_date}
+                    </p>
+                  </div>
+                  <div className="list-actions">
+                    <button type="button" className="btn-agri-outline btn-sm" onClick={() => onEdit(harvest)}>
+                      <i className="bi bi-pencil me-1" />Edit
+                    </button>
+                    <button type="button" className="btn-agri-danger btn-sm" onClick={() => void onDelete(harvest.id)}>
+                      <i className="bi bi-trash me-1" />Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
