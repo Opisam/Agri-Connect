@@ -9,7 +9,7 @@ type HomeNavigation = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 export function HomeScreen() {
   const navigation = useNavigation<HomeNavigation>();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <View style={styles.container}>
@@ -18,6 +18,8 @@ export function HomeScreen() {
         Manage your farm. Understand your finances. Find better market
         opportunities.
       </Text>
+
+      {user && <Text style={styles.welcome}>Welcome, {user.full_name}</Text>}
 
       <View style={styles.menu}>
         <Pressable
@@ -38,20 +40,35 @@ export function HomeScreen() {
         >
           <Text style={styles.buttonText}>Guides</Text>
         </Pressable>
-        {user && (
-            <>
-                <Pressable
-                  style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-                  onPress={() => navigation.navigate('Notifications')}
-                >
-                  <Text style={styles.buttonText}>Notifications</Text>
-                </Pressable>
-                <Pressable
-                  style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-                  onPress={() => navigation.navigate('Orders')}
-                >
-                  <Text style={styles.buttonText}>My Orders</Text>
-                </Pressable>
+        {!user ? (
+          <>
+            <Pressable
+              style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+              onPress={() => navigation.navigate('Login')}
+            >
+              <Text style={styles.buttonText}>Log in</Text>
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [styles.buttonGhost, pressed && styles.buttonPressed]}
+              onPress={() => navigation.navigate('Register')}
+            >
+              <Text style={styles.buttonGhostText}>Create account</Text>
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <Pressable
+              style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+              onPress={() => navigation.navigate('Notifications')}
+            >
+              <Text style={styles.buttonText}>Notifications</Text>
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+              onPress={() => navigation.navigate('Orders')}
+            >
+              <Text style={styles.buttonText}>My Orders</Text>
+            </Pressable>
             {user.role === 'FARMER' && (
               <Pressable
                 style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
@@ -60,6 +77,12 @@ export function HomeScreen() {
                 <Text style={styles.buttonText}>My Farms</Text>
               </Pressable>
             )}
+            <Pressable
+              style={({ pressed }) => [styles.buttonGhost, pressed && styles.buttonPressed]}
+              onPress={() => void logout()}
+            >
+              <Text style={styles.buttonGhostText}>Log out</Text>
+            </Pressable>
           </>
         )}
       </View>
@@ -86,6 +109,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 8,
   },
+  welcome: {
+    fontSize: 16,
+    color: '#1b5e20',
+    textAlign: 'center',
+    marginTop: 16,
+  },
   menu: {
     width: '100%',
     marginTop: 24,
@@ -97,11 +126,24 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'center',
   },
+  buttonGhost: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#2e7d32',
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
   buttonPressed: {
     opacity: 0.85,
   },
   buttonText: {
     color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  buttonGhostText: {
+    color: '#2e7d32',
     fontSize: 16,
     fontWeight: '600',
   },
