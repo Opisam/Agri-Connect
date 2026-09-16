@@ -96,90 +96,113 @@ export function ActivitiesPage() {
 
   return (
     <div className="content">
-      <div>
-        <Link to="/crops">← Back to crops</Link>
-        <h1 className="page-title">{cropLabel || `Crop #${cropId}`}</h1>
-        <p className="page-subtitle">Record farming activities for this crop.</p>
+      <div className="agri-page-header">
+        <Link to="/crops" className="text-decoration-none">
+          <i className="bi bi-arrow-left me-1" />Back to crops
+        </Link>
+        <h1 className="mt-2">
+          <i className="bi bi-clipboard-check me-2 text-success" />
+          {cropLabel || `Crop #${cropId}`}
+        </h1>
+        <p>Record farming activities for this crop.</p>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
-        <h2>{editingId ? 'Edit Activity' : 'Record an Activity'}</h2>
-        <form onSubmit={onSubmit} className="form-grid">
-          <label className="form-field">
-            Activity type
-            <select value={form.activity_type} onChange={set('activity_type')}>
-              {ACTIVITY_TYPES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Date
-            <input type="date" value={form.date} onChange={set('date')} required />
-          </label>
-          <label className="form-field full">
-            Description
-            <input value={form.description} onChange={set('description')} placeholder="e.g. Second weeding round" />
-          </label>
-          <label className="form-field">
-            Cost (UGX)
-            <input type="number" step="0.01" min="0" value={form.cost} onChange={set('cost')} placeholder="e.g. 15000" />
-          </label>
-          <label className="form-field full">
-            Notes
-            <textarea value={form.notes} onChange={set('notes')} rows={2} placeholder="Optional" />
-          </label>
-          <div className="form-actions">
-            <button type="submit" className="btn-primary" disabled={busy}>
-              {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add activity'}
-            </button>
-            {editingId && (
-              <button
-                type="button"
-                className="btn-ghost"
-                onClick={() => {
-                  setEditingId(null)
-                  setForm(EMPTY_FORM)
-                }}
-              >
-                Cancel
-              </button>
-            )}
-          </div>
-        </form>
-      </section>
-
-      <section className="section">
-        <h2>All Activities</h2>
-        {activities.length === 0 ? (
-          <div className="empty">No activities yet. Record the first activity above.</div>
-        ) : (
-          <div className="list">
-            {activities.map((activity) => (
-              <div key={activity.id} className="list-item">
-                <div>
-                  <h3>{activity.activity_type_display}</h3>
-                  <p>
-                    {activity.date}
-                    {activity.description ? ` · ${activity.description}` : ''}
-                    {Number(activity.cost) > 0 ? ` · ${formatCost(activity.cost)}` : ''}
-                  </p>
-                </div>
-                <div className="item-actions">
-                  <button type="button" className="btn-ghost btn-sm" onClick={() => onEdit(activity)}>
-                    Edit
-                  </button>
-                  <button type="button" className="btn-danger btn-sm" onClick={() => void onDelete(activity.id)}>
-                    Delete
-                  </button>
-                </div>
+      <div className="agri-card card agri-section">
+        <div className="card-header">
+          <i className="bi bi-plus-circle me-1 text-success" />
+          {editingId ? 'Edit Activity' : 'Record an Activity'}
+        </div>
+        <div className="card-body">
+          <form onSubmit={onSubmit}>
+            <div className="row g-3">
+              <div className="col-md-4">
+                <label className="form-label">Activity type</label>
+                <select className="form-select" value={form.activity_type} onChange={set('activity_type')}>
+                  {ACTIVITY_TYPES.map((t) => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+              <div className="col-md-4">
+                <label className="form-label">Date</label>
+                <input type="date" className="form-control" value={form.date} onChange={set('date')} required />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Cost (UGX)</label>
+                <input type="number" step="0.01" min="0" className="form-control" value={form.cost} onChange={set('cost')} placeholder="e.g. 15000" />
+              </div>
+              <div className="col-md-12">
+                <label className="form-label">Description</label>
+                <input className="form-control" value={form.description} onChange={set('description')} placeholder="e.g. Second weeding round" />
+              </div>
+              <div className="col-md-12">
+                <label className="form-label">Notes</label>
+                <textarea className="form-control" value={form.notes} onChange={set('notes')} rows={2} placeholder="Optional" />
+              </div>
+            </div>
+            <div className="d-flex gap-2 mt-3">
+              <button type="submit" className="btn-agri" disabled={busy}>
+                <i className="bi bi-check-lg me-1" />
+                {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add activity'}
+              </button>
+              {editingId && (
+                <button
+                  type="button"
+                  className="btn-agri-outline"
+                  onClick={() => {
+                    setEditingId(null)
+                    setForm(EMPTY_FORM)
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="agri-card card">
+        <div className="card-header">
+          <i className="bi bi-list-ul me-1 text-success" />All Activities ({activities.length})
+        </div>
+        <div className="card-body">
+          {activities.length === 0 ? (
+            <div className="agri-empty">
+              <i className="bi bi-clipboard" />
+              No activities yet. Record the first activity above.
+            </div>
+          ) : (
+            <div className="d-flex flex-column gap-2">
+              {activities.map((activity) => (
+                <div key={activity.id} className="agri-list-item">
+                  <div>
+                    <h5>
+                      <i className="bi bi-clipboard-check me-1 text-success" />
+                      {activity.activity_type_display}
+                    </h5>
+                    <p>
+                      {activity.date}
+                      {activity.description ? ` · ${activity.description}` : ''}
+                      {Number(activity.cost) > 0 ? ` · ${formatCost(activity.cost)}` : ''}
+                    </p>
+                  </div>
+                  <div className="list-actions">
+                    <button type="button" className="btn-agri-outline btn-sm" onClick={() => onEdit(activity)}>
+                      <i className="bi bi-pencil me-1" />Edit
+                    </button>
+                    <button type="button" className="btn-agri-danger btn-sm" onClick={() => void onDelete(activity.id)}>
+                      <i className="bi bi-trash me-1" />Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

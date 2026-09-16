@@ -29,9 +29,9 @@ export function ArticlePage() {
   if (error) {
     return (
       <div className="content">
-        <div className="alert alert-error">{error}</div>
+        <div className="alert alert-agri-error">{error}</div>
         <p>
-          <Link to="/guides">← Back to guides</Link>
+          <Link to="/guides"><i className="bi bi-arrow-left me-1" />Back to guides</Link>
         </p>
       </div>
     )
@@ -41,7 +41,7 @@ export function ArticlePage() {
     return (
       <div className="content">
         <p>
-          <Link to="/guides">← Back to guides</Link>
+          <Link to="/guides"><i className="bi bi-arrow-left me-1" />Back to guides</Link>
         </p>
       </div>
     )
@@ -49,29 +49,31 @@ export function ArticlePage() {
 
   return (
     <div className="content">
-      <p>
-        <Link to="/guides">← Back to guides</Link>
-      </p>
-      <div>
-        <h1 className="page-title">{article.title}</h1>
-        <p className="page-subtitle">
+      <Link to="/guides" className="text-decoration-none">
+        <i className="bi bi-arrow-left me-1" />Back to guides
+      </Link>
+      <div className="agri-page-header">
+        <h1><i className="bi bi-journal-text me-2 text-success" />{article.title}</h1>
+        <p>
           {article.category_name && (
-            <span className="badge">{article.category_name}</span>
+            <span className="badge badge-agri me-1">{article.category_name}</span>
           )}
-          {''}· {formatDate(article.created_at)}
+          · {formatDate(article.created_at)}
           {article.author_name ? ` · ${article.author_name}` : ''}
         </p>
       </div>
 
-      {article.image && <img src={article.image} alt={article.title} className="article-image" />}
+      {article.image && <img src={article.image} alt={article.title} className="agri-article-image" />}
 
-      <section className="section">
-        <article className="prose">
-          {article.content.split('\n').map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
-        </article>
-      </section>
+      <div className="agri-card card">
+        <div className="card-body">
+          <article className="agri-prose">
+            {article.content.split('\n').map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </article>
+        </div>
+      </div>
     </div>
   )
 }

@@ -110,117 +110,127 @@ export function ExpensesPage() {
 
   return (
     <div className="content">
-      <div>
-        <h1 className="page-title">Expenses</h1>
-        <p className="page-subtitle">Record the costs of running your farm.</p>
+      <div className="agri-page-header">
+        <h1><i className="bi bi-receipt me-2 text-success" />Expenses</h1>
+        <p>Record the costs of running your farm.</p>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
-        <h2>{editingId ? 'Edit Expense' : 'Add an Expense'}</h2>
-        <form onSubmit={onSubmit} className="form-grid">
-          <label className="form-field">
-            Farm
-            <select value={form.farm} onChange={set('farm')}>
-              <option value={0}>Choose a farm…</option>
-              {farms.map((farm) => (
-                <option key={farm.id} value={farm.id}>{farm.name}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Crop (optional)
-            <select value={form.crop ?? 0} onChange={set('crop')}>
-              <option value={0}>No specific crop</option>
-              {farmCrops.map((crop) => (
-                <option key={crop.id} value={crop.id}>
-                  {crop.crop_type_display}{crop.variety ? ` — ${crop.variety}` : ''}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Category
-            <select value={form.category} onChange={set('category')}>
-              {EXPENSE_CATEGORIES.map((c) => (
-                <option key={c.value} value={c.value}>{c.label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            Amount (UGX)
-            <input
-              type="number"
-              step="0.01"
-              min="0.01"
-              value={form.amount}
-              onChange={set('amount')}
-              required
-              placeholder="e.g. 50000"
-            />
-          </label>
-          <label className="form-field">
-            Date
-            <input type="date" value={form.date} onChange={set('date')} required />
-          </label>
-          <label className="form-field">
-            Description
-            <input value={form.description} onChange={set('description')} placeholder="e.g. Maize seeds" />
-          </label>
-          <label className="form-field full">
-            Notes
-            <textarea value={form.notes} onChange={set('notes')} rows={2} placeholder="Optional" />
-          </label>
-          <div className="form-actions">
-            <button type="submit" className="btn-primary" disabled={busy}>
-              {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add expense'}
-            </button>
-            {editingId && (
-              <button
-                type="button"
-                className="btn-ghost"
-                onClick={() => {
-                  setEditingId(null)
-                  setForm(EMPTY_FORM)
-                }}
-              >
-                Cancel
-              </button>
-            )}
-          </div>
-        </form>
-      </section>
-
-      <section className="section">
-        <h2>All Expenses</h2>
-        {expenses.length === 0 ? (
-          <div className="empty">No expenses yet. Add your first expense above.</div>
-        ) : (
-          <div className="list">
-            {expenses.map((expense) => (
-              <div key={expense.id} className="list-item">
-                <div>
-                  <h3>{expense.category_display} — UGX {Number(expense.amount).toLocaleString()}</h3>
-                  <p>
-                    {expense.farm_name}
-                    {expense.crop_name ? ` · ${expense.crop_name}` : ''} · {expense.date}
-                    {expense.description ? ` · ${expense.description}` : ''}
-                  </p>
-                </div>
-                <div className="item-actions">
-                  <button type="button" className="btn-ghost btn-sm" onClick={() => onEdit(expense)}>
-                    Edit
-                  </button>
-                  <button type="button" className="btn-danger btn-sm" onClick={() => void onDelete(expense.id)}>
-                    Delete
-                  </button>
-                </div>
+      <div className="agri-card card agri-section">
+        <div className="card-header">
+          <i className="bi bi-plus-circle me-1 text-success" />
+          {editingId ? 'Edit Expense' : 'Add an Expense'}
+        </div>
+        <div className="card-body">
+          <form onSubmit={onSubmit}>
+            <div className="row g-3">
+              <div className="col-md-4">
+                <label className="form-label">Farm</label>
+                <select className="form-select" value={form.farm} onChange={set('farm')}>
+                  <option value={0}>Choose a farm…</option>
+                  {farms.map((farm) => (
+                    <option key={farm.id} value={farm.id}>{farm.name}</option>
+                  ))}
+                </select>
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+              <div className="col-md-4">
+                <label className="form-label">Crop (optional)</label>
+                <select className="form-select" value={form.crop ?? 0} onChange={set('crop')}>
+                  <option value={0}>No specific crop</option>
+                  {farmCrops.map((crop) => (
+                    <option key={crop.id} value={crop.id}>
+                      {crop.crop_type_display}{crop.variety ? ` — ${crop.variety}` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Category</label>
+                <select className="form-select" value={form.category} onChange={set('category')}>
+                  {EXPENSE_CATEGORIES.map((c) => (
+                    <option key={c.value} value={c.value}>{c.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Amount (UGX)</label>
+                <input type="number" step="0.01" min="0.01" className="form-control" value={form.amount} onChange={set('amount')} required placeholder="e.g. 50000" />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Date</label>
+                <input type="date" className="form-control" value={form.date} onChange={set('date')} required />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Description</label>
+                <input className="form-control" value={form.description} onChange={set('description')} placeholder="e.g. Maize seeds" />
+              </div>
+              <div className="col-12">
+                <label className="form-label">Notes</label>
+                <textarea className="form-control" value={form.notes} onChange={set('notes')} rows={2} placeholder="Optional" />
+              </div>
+            </div>
+            <div className="d-flex gap-2 mt-3">
+              <button type="submit" className="btn-agri" disabled={busy}>
+                <i className="bi bi-check-lg me-1" />
+                {busy ? 'Saving…' : editingId ? 'Save changes' : 'Add expense'}
+              </button>
+              {editingId && (
+                <button
+                  type="button"
+                  className="btn-agri-outline"
+                  onClick={() => {
+                    setEditingId(null)
+                    setForm(EMPTY_FORM)
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="agri-card card">
+        <div className="card-header">
+          <i className="bi bi-list-ul me-1 text-success" />All Expenses ({expenses.length})
+        </div>
+        <div className="card-body">
+          {expenses.length === 0 ? (
+            <div className="agri-empty">
+              <i className="bi bi-receipt" />
+              No expenses yet. Add your first expense above.
+            </div>
+          ) : (
+            <div className="d-flex flex-column gap-2">
+              {expenses.map((expense) => (
+                <div key={expense.id} className="agri-list-item">
+                  <div>
+                    <h5>
+                      <i className="bi bi-receipt me-1 text-danger" />
+                      {expense.category_display} — UGX {Number(expense.amount).toLocaleString()}
+                    </h5>
+                    <p>
+                      {expense.farm_name}
+                      {expense.crop_name ? ` · ${expense.crop_name}` : ''} · {expense.date}
+                      {expense.description ? ` · ${expense.description}` : ''}
+                    </p>
+                  </div>
+                  <div className="list-actions">
+                    <button type="button" className="btn-agri-outline btn-sm" onClick={() => onEdit(expense)}>
+                      <i className="bi bi-pencil me-1" />Edit
+                    </button>
+                    <button type="button" className="btn-agri-danger btn-sm" onClick={() => void onDelete(expense.id)}>
+                      <i className="bi bi-trash me-1" />Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

@@ -40,33 +40,34 @@ export function GuidesListPage() {
 
   return (
     <div className="content">
-      <div>
-        <h1 className="page-title">Agricultural Guides</h1>
-        <p className="page-subtitle">
-          Practical advice on crops, livestock and farming best practices.
-        </p>
+      <div className="agri-page-header">
+        <h1><i className="bi bi-book me-2 text-success" />Agricultural Guides</h1>
+        <p>Practical advice on crops, livestock and farming best practices.</p>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="alert alert-agri-error">{error}</div>}
 
-      <section className="section">
+      <div className="agri-filter-bar">
         <form
-          className="form-grid"
+          className="row g-2"
           onSubmit={(e) => {
             e.preventDefault()
           }}
         >
-          <label className="form-field">
-            Search
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="e.g. maize"
-            />
-          </label>
-          <label className="form-field">
-            Category
+          <div className="col-md-8">
+            <div className="input-group">
+              <span className="input-group-text bg-white"><i className="bi bi-search text-muted" /></span>
+              <input
+                className="form-control"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="e.g. maize"
+              />
+            </div>
+          </div>
+          <div className="col-md-4">
             <select
+              className="form-select"
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
             >
@@ -77,35 +78,45 @@ export function GuidesListPage() {
                 </option>
               ))}
             </select>
-          </label>
+          </div>
         </form>
-      </section>
+      </div>
 
-      <section className="section">
+      <div>
         {filtered.length === 0 ? (
-          <div className="empty">No guides match your search.</div>
+          <div className="agri-empty">
+            <i className="bi bi-journal-x" />
+            No guides match your search.
+          </div>
         ) : (
-          <div className="list">
+          <div className="row g-4">
             {filtered.map((article) => (
-              <div key={article.id} className="list-item">
-                <h3>
-                  <Link to={`/guides/${article.id}`}>{article.title}</Link>
-                </h3>
-                <p>
-                  {article.category_name && (
-                    <span className="badge">{article.category_name}</span>
-                  )}
-                  <span className="text-muted">
-                    {' '}· {formatDate(article.created_at)}
-                    {article.author_name ? ` · ${article.author_name}` : ''}
-                  </span>
-                </p>
-                <p className="text-muted">{summarise(article.content)}</p>
+              <div key={article.id} className="col-md-6 col-lg-4">
+                <Link to={`/guides/${article.id}`} className="text-decoration-none h-100 d-block">
+                  <div className="agri-card card h-100">
+                    <div className="card-body">
+                      <h5 className="fw-bold mb-2" style={{ color: '#1b5e20' }}>
+                        <i className="bi bi-journal-text me-1 text-success" />
+                        {article.title}
+                      </h5>
+                      <p className="mb-2">
+                        {article.category_name && (
+                          <span className="badge badge-agri">{article.category_name}</span>
+                        )}
+                        <span className="text-muted small ms-1">
+                          {formatDate(article.created_at)}
+                          {article.author_name ? ` · ${article.author_name}` : ''}
+                        </span>
+                      </p>
+                      <p className="text-muted small mb-0">{summarise(article.content)}</p>
+                    </div>
+                  </div>
+                </Link>
               </div>
             ))}
           </div>
         )}
-      </section>
+      </div>
     </div>
   )
 }
