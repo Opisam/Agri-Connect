@@ -1,8 +1,36 @@
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
+import { NativeModules, Platform } from 'react-native';
 
-const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8000/api/v1';
+function getMetroHost(): string | null {
+  const scriptURL = (NativeModules.SourceCode as
+    | { scriptURL?: string }
+    | undefined)?.scriptURL;
+  if (!scriptURL) return null;
+  // Expo Go uses custom schemes (e.g. exp://192.168.1.5:8081).
+  const match = scriptURL.match(/^[a-z][a-z0-9+.-]*:\/\/([^/:]+)(?::\d+)?/i);
+  return match ? match[1] : null;
+}
+
+function resolveApiBaseUrl(): string {
+  const explicit = process.env.EXPO_PUBLIC_API_BASE_URL;
+  if (explicit) {
+    return explicit.replace(/\/+$/, '');
+  }
+  // In Expo Go / dev builds the Metro bundler host is the dev machine, so the
+  // Django server on that same machine is reachable at the same address.
+  const host = getMetroHost();
+  if (host) {
+    return `http://${host}:8000/api/v1`;
+  }
+  // Android emulators reach the host machine via 10.0.2.2.
+  if (Platform.OS === 'android') {
+    return 'http://10.0.2.2:8000/api/v1';
+  }
+  return 'http://localhost:8000/api/v1';
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 export interface ApiEnvelope<T> {
   status: 'success' | 'error';
@@ -16,10 +44,15 @@ export function getApiErrorMessage(error: unknown): string {
     typeof error === 'object' &&
     error !== null &&
     'response' in error &&
-    typeof (error as { response: { data?: { message?: string } } }).response.data?.message === 'string'
+    typeof (error as { response: { data?: unknown } }).response.data === 'object' &&
+    (error as { response: { data?: unknown } }).response.data !== null
   ) {
-    return (error as { response: { data: { message: string } } }).response.data
-      .message;
+    const data = (error as { response: { data: Record<string, unknown> } })
+      .response.data;
+    const message = data.message ?? data.detail;
+    if (typeof message === 'string' && message) {
+      return message;
+    }
   }
   return 'Something went wrong. Please try again.';
 }

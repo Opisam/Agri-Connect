@@ -43,3 +43,25 @@ test('shows the guides link to logged-out users', async () => {
   const { getByText } = await render(<HomeScreen />);
   expect(getByText('Guides')).toBeOnTheScreen();
 });
+
+test('shows a log in link to logged-out users', async () => {
+  const { getByText } = await render(<HomeScreen />);
+  expect(getByText('Log in')).toBeOnTheScreen();
+});
+
+test('shows a create account link to logged-out users', async () => {
+  const { getByText } = await render(<HomeScreen />);
+  expect(getByText('Create account')).toBeOnTheScreen();
+});
+
+test('navigates to the login screen when log in is pressed', async () => {
+  const { getByText } = await render(<HomeScreen />);
+  await fireEvent.press(getByText('Log in'));
+  expect(mockNavigate).toHaveBeenCalledWith('Login');
+});
+
+test('navigates to the register screen when create account is pressed', async () => {
+  const { getByText } = await render(<HomeScreen />);
+  await fireEvent.press(getByText('Create account'));
+  expect(mockNavigate).toHaveBeenCalledWith('Register');
+});
